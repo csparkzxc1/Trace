@@ -14,7 +14,8 @@
       "@/lib/*": ["src/lib/*"],
       "@/types/*": ["src/types/*"]
     },
-    "jsx": "react-native"
+    "jsx": "react-native",
+    "types": ["node", "jest"]
   },
   "include": [
     "**/*.ts",
