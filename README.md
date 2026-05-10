@@ -50,6 +50,12 @@
 └─ docs/
 ```
 
+## 베타 / 출시
+
+- 절차: [`docs/BETA_RELEASE.md`](./docs/BETA_RELEASE.md)
+- EAS 프로파일: `eas.json` (development · preview · production)
+- 환경변수: `.env.example` 참조
+
 ## 시작하기
 
 ```bash
