@@ -1,11 +1,54 @@
+import { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { ScreenContainer, Card, Button } from "@/components/ui";
 import { useAuthStore } from "@/lib/stores/auth";
+import * as paymentApi from "@/lib/api/payment";
+import * as authApi from "@/lib/api/auth";
+import { isPremiumActive } from "@/lib/utils/premium";
 import { colors, fonts } from "@/theme/tokens";
+
+// 토스 결제 위젯/SDK 통합 자리. 실제 출시 시 @tosspayments/payment-sdk
+// (RN: react-native-toss-payments-sdk 또는 WebView) 로 교체.
+// 본 화면은 authKey 가 사용자 흐름 후 콜백으로 전달된다고 가정한 인터페이스.
+async function authorizeBillingKeyViaToss(): Promise<string | null> {
+  // TODO: react-native-toss-payments-sdk 통합. 현재는 미통합 안내.
+  return null;
+}
 
 export default function SubscriptionSettings() {
   const profile = useAuthStore((s) => s.profile);
-  const isPremium = profile?.is_premium ?? false;
+  const setProfile = useAuthStore((s) => s.setProfile);
+  const userId = useAuthStore((s) => s.user?.id);
+  const active = isPremiumActive(profile);
+  const [busy, setBusy] = useState(false);
+  const [hint, setHint] = useState<string | null>(null);
+
+  async function startSubscription() {
+    if (!userId) return;
+    setBusy(true);
+    setHint(null);
+    try {
+      const authKey = await authorizeBillingKeyViaToss();
+      if (!authKey) {
+        setHint(
+          "결제 모듈이 아직 연결되지 않았습니다. 잠시 뒤 다시 시도해주세요.",
+        );
+        return;
+      }
+      const r = await paymentApi.issueBillingKey({
+        customerKey: userId,
+        authKey,
+      });
+      if (!r.ok) throw new Error("issue failed");
+      // 프로필 다시 불러와 게이트 갱신
+      const fresh = await authApi.fetchProfile(userId);
+      setProfile(fresh);
+    } catch {
+      setHint("결제가 완료되지 않았습니다. 잠시 뒤 다시 시도해주세요.");
+    } finally {
+      setBusy(false);
+    }
+  }
 
   return (
     <ScreenContainer scroll>
@@ -13,15 +56,21 @@ export default function SubscriptionSettings() {
       <View style={{ height: 24 }} />
 
       <Card>
-        <Text style={styles.tier}>{isPremium ? "Premium" : "Free"}</Text>
+        <Text style={styles.tier}>{active ? "Premium" : "Free"}</Text>
         <Text style={styles.body}>
-          {isPremium
+          {active
             ? "제자훈련 커리큘럼, 무제한 기도수첩, 통계 심화, AI 묵상 동반자가 활성화되어 있습니다."
             : "Free에서도 일일 체크·구역 1개·기본 통계는 그대로 제공됩니다."}
         </Text>
+        {active && profile?.premium_until ? (
+          <Text style={styles.untilLabel}>
+            <Text style={styles.untilEm}>{profile.premium_until}</Text>
+            <Text> 까지</Text>
+          </Text>
+        ) : null}
       </Card>
 
-      {!isPremium ? (
+      {!active ? (
         <>
           <View style={{ height: 16 }} />
           <Card>
@@ -40,10 +89,16 @@ export default function SubscriptionSettings() {
           </Card>
           <View style={{ height: 24 }} />
           <Button
-            label="Premium 시작하기 (출시 후 활성)"
-            disabled
-            onPress={() => {}}
+            label="Premium 시작하기"
+            size="lg"
+            loading={busy}
+            onPress={startSubscription}
           />
+          {hint ? <Text style={styles.hint}>{hint}</Text> : null}
+          <Text style={styles.terms}>
+            결제는 토스페이먼츠를 통해 안전하게 처리됩니다. 언제든 해지할 수
+            있으며, 해지 후에도 결제 주기 끝까지 Premium이 유지됩니다.
+          </Text>
         </>
       ) : null}
     </ScreenContainer>
@@ -66,6 +121,14 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     marginTop: 8,
   },
+  untilLabel: {
+    marginTop: 12,
+  },
+  untilEm: {
+    fontFamily: fonts.accentBold,
+    fontSize: 16,
+    color: colors.burgundy,
+  },
   priceLabel: {
     fontFamily: fonts.accent,
     fontStyle: "italic",
@@ -83,5 +146,19 @@ const styles = StyleSheet.create({
     fontFamily: fonts.body,
     fontSize: 14,
     color: colors.inkSoft,
+  },
+  hint: {
+    fontFamily: fonts.body,
+    fontSize: 13,
+    color: colors.burgundy,
+    marginTop: 12,
+    lineHeight: 20,
+  },
+  terms: {
+    fontFamily: fonts.body,
+    fontSize: 12,
+    color: colors.inkSoft,
+    marginTop: 16,
+    lineHeight: 18,
   },
 });
