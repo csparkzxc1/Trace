@@ -11,7 +11,7 @@ import {
 } from "@expo-google-fonts/noto-serif-kr";
 import { GowunDodum_400Regular } from "@expo-google-fonts/gowun-dodum";
 import {
-  CormorantGaramond_500Italic,
+  CormorantGaramond_500Medium_Italic,
   CormorantGaramond_600SemiBold,
 } from "@expo-google-fonts/cormorant-garamond";
 import { BrandSplash } from "@/components/brand";
@@ -67,7 +67,7 @@ export default function RootLayout() {
     NotoSerifKR_500Medium,
     NotoSerifKR_700Bold,
     GowunDodum_400Regular,
-    CormorantGaramond_500Italic,
+    CormorantGaramond_500Medium_Italic,
     CormorantGaramond_600SemiBold,
   });
 

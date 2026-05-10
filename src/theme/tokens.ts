@@ -15,7 +15,7 @@ export const fonts = {
   display: "NotoSerifKR_500Medium",
   displayBold: "NotoSerifKR_700Bold",
   body: "GowunDodum_400Regular",
-  accent: "CormorantGaramond_500Italic",
+  accent: "CormorantGaramond_500Medium_Italic",
   accentBold: "CormorantGaramond_600SemiBold",
 } as const;
 

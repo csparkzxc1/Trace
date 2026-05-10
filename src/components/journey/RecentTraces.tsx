@@ -2,7 +2,6 @@ import { View, Text, StyleSheet } from "react-native";
 import { colors, fonts } from "@/theme/tokens";
 
 type Trace = {
-  date: string;
   categoryKo: string;
   categoryEn?: string;
   note: string | null;

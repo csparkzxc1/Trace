@@ -131,42 +131,43 @@ export function extractSignals(
     ? { month: lastCompleteMonth, category: recentDom }
     : null;
 
-  // sundayContinuity: 가장 최근까지 이어진 주일 worship 연속 주수
+  // sundayContinuity: 가장 최근 주일부터 거꾸로 worship 연속 주수.
+  // reference 자체가 days에 없어도 days 안의 가장 최근 일요일부터 시작.
   let sundayContinuity: RhythmSignals["sundayContinuity"] = null;
   let consec = 0;
-  // 오늘부터 거꾸로 일요일을 찾아 worship 체크 여부 확인
-  let cursor = reference;
-  let safety = 0;
-  while (safety++ < 200) {
-    const d = days.find((x) => x.date === cursor);
-    if (!d) break;
-    if (new Date(cursor).getDay() === 0) {
-      if ((d.byCategory.worship ?? 0) > 0) {
-        consec += 1;
-      } else {
-        break;
-      }
+  for (let i = days.length - 1; i >= 0; i--) {
+    const d = days[i]!;
+    if (d.date > reference) continue;
+    if (new Date(d.date).getDay() !== 0) continue;
+    if ((d.byCategory.worship ?? 0) > 0) {
+      consec += 1;
+    } else {
+      break;
     }
-    cursor = addDays(cursor, -1);
   }
   if (consec >= 3) sundayContinuity = { weeks: consec };
 
-  // quietPause: 7일 이상 흔적의 날이 한 번도 없는 가장 최근 구간
+  // quietPause: 7일 이상 흔적의 날이 한 번도 없는 가장 최근 구간.
+  // 배열 끝까지 이어진 run도 잡도록 루프 후 한 번 더 평가.
   let quietPause: RhythmSignals["quietPause"] = null;
   let runStart: string | null = null;
   let runLen = 0;
+  const flushRun = () => {
+    if (runStart && runLen >= 7) {
+      quietPause = { startDate: runStart, days: runLen };
+    }
+  };
   for (const d of days) {
     if (d.count < TRACE_THRESHOLD) {
       if (!runStart) runStart = d.date;
       runLen += 1;
     } else {
-      if (runStart && runLen >= 7) {
-        quietPause = { startDate: runStart, days: runLen };
-      }
+      flushRun();
       runStart = null;
       runLen = 0;
     }
   }
+  flushRun();
 
   // evenDistribution / singleFocus
   const totalCat = Object.values(overallCategory).reduce(

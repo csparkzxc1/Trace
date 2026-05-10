@@ -16,7 +16,7 @@ export type CategorySlug =
   | "evangel"
   | "service";
 
-export interface Church {
+export type Church = {
   id: string;
   name: string;
   denomination: string | null;
@@ -28,7 +28,7 @@ export interface Church {
   updated_at: Iso;
 }
 
-export interface Cell {
+export type Cell = {
   id: string;
   church_id: string;
   name: string;
@@ -38,7 +38,7 @@ export interface Cell {
   updated_at: Iso;
 }
 
-export interface UserProfile {
+export type UserProfile = {
   id: string;
   email: string;
   display_name: string;
@@ -54,7 +54,7 @@ export interface UserProfile {
   updated_at: Iso;
 }
 
-export interface TrainingCategory {
+export type TrainingCategory = {
   id: string;
   church_id: string | null;
   slug: CategorySlug | string;
@@ -66,7 +66,7 @@ export interface TrainingCategory {
   created_at: Iso;
 }
 
-export interface DailyCheck {
+export type DailyCheck = {
   id: string;
   user_id: string;
   date: DateStr;
@@ -79,7 +79,7 @@ export interface DailyCheck {
   updated_at: Iso;
 }
 
-export interface PrayerJournalEntry {
+export type PrayerJournalEntry = {
   id: string;
   user_id: string;
   title: string | null;
@@ -92,7 +92,7 @@ export interface PrayerJournalEntry {
   updated_at: Iso;
 }
 
-export interface ScriptureMemory {
+export type ScriptureMemory = {
   id: string;
   user_id: string;
   reference: string;
@@ -107,7 +107,7 @@ export interface ScriptureMemory {
   updated_at: Iso;
 }
 
-export interface ReadingPlanProgress {
+export type ReadingPlanProgress = {
   user_id: string;
   plan_id: string;
   date: DateStr;
@@ -116,7 +116,7 @@ export interface ReadingPlanProgress {
   updated_at: Iso;
 }
 
-export interface Assessment {
+export type Assessment = {
   id: string;
   user_id: string;
   type: string;
@@ -125,7 +125,7 @@ export interface Assessment {
   created_at: Iso;
 }
 
-export interface Encouragement {
+export type Encouragement = {
   id: string;
   from_user_id: string;
   to_user_id: string;
@@ -134,7 +134,7 @@ export interface Encouragement {
   created_at: Iso;
 }
 
-export interface VisibilitySettings {
+export type VisibilitySettings = {
   user_id: string;
   share_streak: boolean;
   share_categories: string[];
@@ -143,7 +143,7 @@ export interface VisibilitySettings {
   updated_at: Iso;
 }
 
-export interface NotificationSettings {
+export type NotificationSettings = {
   user_id: string;
   morning_prayer_at: string | null;
   qt_at: string | null;
@@ -154,31 +154,43 @@ export interface NotificationSettings {
   updated_at: Iso;
 }
 
+// Insert/Update를 Partial로 완화 — 실제 DB가 RLS·column default·NOT NULL을
+// 검증한다. 클라이언트 타입 단계에서 모든 필수 컬럼을 강제하면 upsert·patch
+// 시그니처가 비현실적으로 무거워지므로 Supabase 공식 codegen과 동일한 정책.
+type TableEntry<R> = {
+  Row: R;
+  Insert: Partial<R>;
+  Update: Partial<R>;
+  Relationships: [];
+};
+
 export type Database = {
   public: {
     Tables: {
-      churches: { Row: Church };
-      cells: { Row: Cell };
-      users: { Row: UserProfile };
-      training_categories: { Row: TrainingCategory };
-      daily_checks: { Row: DailyCheck };
-      prayer_journal: { Row: PrayerJournalEntry };
-      scripture_memory: { Row: ScriptureMemory };
-      reading_plan_progress: { Row: ReadingPlanProgress };
-      assessments: { Row: Assessment };
-      encouragements: { Row: Encouragement };
-      visibility_settings: { Row: VisibilitySettings };
-      notification_settings: { Row: NotificationSettings };
+      churches: TableEntry<Church>;
+      cells: TableEntry<Cell>;
+      users: TableEntry<UserProfile>;
+      training_categories: TableEntry<TrainingCategory>;
+      daily_checks: TableEntry<DailyCheck>;
+      prayer_journal: TableEntry<PrayerJournalEntry>;
+      scripture_memory: TableEntry<ScriptureMemory>;
+      reading_plan_progress: TableEntry<ReadingPlanProgress>;
+      assessments: TableEntry<Assessment>;
+      encouragements: TableEntry<Encouragement>;
+      visibility_settings: TableEntry<VisibilitySettings>;
+      notification_settings: TableEntry<NotificationSettings>;
     };
     Views: {
       daily_checks_public: {
         Row: Omit<DailyCheck, "note" | "scripture_ref">;
+        Relationships: [];
       };
       prayer_journal_shared: {
         Row: Pick<
           PrayerJournalEntry,
           "id" | "user_id" | "title" | "request" | "scripture_ref" | "created_at"
         >;
+        Relationships: [];
       };
     };
     Functions: {
@@ -192,5 +204,7 @@ export type Database = {
         Returns: { date: DateStr; completed_count: number }[];
       };
     };
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
   };
 };

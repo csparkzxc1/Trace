@@ -101,19 +101,29 @@ export async function fetchRecentTraces(
 ): Promise<{ date: string; categorySlug: CategorySlug; categoryKo: string; note: string | null }[]> {
   const { data, error } = await supabase
     .from("daily_checks")
-    .select("date, category_id, note, scripture_ref, training_categories(slug, name_ko)")
+    .select("date, category_id, note, scripture_ref")
     .eq("user_id", userId)
     .eq("completed", true)
     .order("updated_at", { ascending: false })
     .limit(limit * 2);
   if (error) throw error;
+  if (!data || data.length === 0) return [];
 
-  return (data ?? []).map((row) => {
-    const cat = (row as { training_categories: { slug: string; name_ko: string } | null }).training_categories;
+  const ids = [...new Set(data.map((r) => r.category_id))];
+  const { data: cats } = await supabase
+    .from("training_categories")
+    .select("id, slug, name_ko")
+    .in("id", ids);
+  const byId = new Map(
+    (cats ?? []).map((c) => [c.id, { slug: c.slug, ko: c.name_ko }]),
+  );
+
+  return data.map((row) => {
+    const cat = byId.get(row.category_id);
     return {
       date: row.date,
       categorySlug: (cat?.slug ?? "worship") as CategorySlug,
-      categoryKo: cat?.name_ko ?? "흔적",
+      categoryKo: cat?.ko ?? "흔적",
       note: row.note ?? row.scripture_ref ?? null,
     };
   });
