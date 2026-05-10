@@ -1,0 +1,20 @@
+/* 다크모드 변형 — useColorTone 헬퍼와 동일 토큰
+   bg: ink, fg: cream, gold-soft 사용 */
+:root {
+  --cream: #1F2A37;          /* swap: 본문 배경 */
+  --cream-deep: #2A3744;
+  --paper: #2A3744;
+  --ink: #F5F1E8;            /* swap: 텍스트 */
+  --ink-soft: #ECE5D3;
+  --gold: #D4B57A;           /* gold-soft 사용 */
+  --gold-soft: #B8924F;
+  --burgundy: #C97676;       /* 다크에서 채도 ↑ */
+  --sage: #8FA67E;
+  --line: rgba(245, 241, 232, 0.15);
+}
+body { background: #000; }
+.frame { background: var(--cream); }
+.statusbar { color: var(--cream-deep); }
+.tabbar { background: var(--cream); border-top-color: var(--line); }
+.tabbar-item { color: rgba(245,241,232,0.5); }
+.tabbar-item.active { color: var(--ink); }

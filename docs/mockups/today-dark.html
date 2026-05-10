@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>흔적 · Trace — 오늘 (다크)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Noto+Serif+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<link rel="stylesheet" href="_dark.css">
+<style>
+  .greeting { color: var(--gold); font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 13px; letter-spacing: 0.12em; }
+  .summary { font-family: 'Noto Serif KR', serif; font-size: 24px; margin-top: 4px; letter-spacing: -0.3px; color: var(--ink); }
+  .streak { font-family: 'Gowun Dodum', sans-serif; font-size: 13px; color: var(--ink-soft); margin-top: 8px; }
+  .streak .num { font-family: 'Cormorant Garamond', serif; font-weight: 600; color: var(--burgundy); font-size: 16px; }
+  .heatmap-row { display: flex; justify-content: space-between; margin-top: 24px; }
+  .hm-cell { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+  .hm-cell .dow { font-family: 'Gowun Dodum', sans-serif; font-size: 11px; color: var(--ink-soft); }
+  .hm-cell .box { width: 28px; height: 28px; border-radius: 4px; }
+  .hm-cell .dom { font-family: 'Cormorant Garamond', serif; font-size: 11px; color: var(--ink-soft); }
+  .b0 { background: var(--cream-deep); }
+  .b1 { background: rgba(212,181,122,0.20); }
+  .b2 { background: rgba(212,181,122,0.45); }
+  .b3 { background: rgba(201,118,118,0.55); }
+  .b4 { background: var(--gold); }
+  .cat-list { display: flex; flex-direction: column; gap: 8px; margin-top: 24px; }
+  .cat-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px; background: var(--paper); border: 1px solid var(--line);
+    border-radius: 4px;
+  }
+  .cat-row.done { background: #3A4754; border-color: var(--gold); }
+  .cat-name { font-family: 'Noto Serif KR', serif; font-size: 18px; color: var(--ink); }
+  .cat-en { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 11px; color: var(--gold); letter-spacing: 0.18em; margin-top: 2px; }
+  .check {
+    width: 28px; height: 28px; border-radius: 4px; border: 1.2px solid var(--line);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .check.done { background: var(--gold); border-color: var(--gold); color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 28px; line-height: 1; }
+  .verse {
+    margin-top: 24px; background: var(--paper); border: 1px solid var(--line);
+    border-radius: 4px; padding: 20px;
+  }
+  .verse .label { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 11px; color: var(--gold); letter-spacing: 0.2em; }
+  .verse .text { font-family: 'Noto Serif KR', serif; font-size: 18px; line-height: 1.7; margin-top: 12px; color: var(--ink); }
+  .verse .ref { margin-top: 12px; font-family: 'Gowun Dodum', sans-serif; font-size: 13px; color: var(--ink-soft); }
+  .gold-rule { background: var(--gold); }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="notch"></div>
+  <div class="statusbar"><span>9:24</span><span>·</span></div>
+  <div class="content">
+    <div class="greeting">5월 10일</div>
+    <h1 class="summary">3가지 흔적이 남았습니다</h1>
+    <div class="streak"><span class="num">17</span> 일 · 흔적이 깊어지고 있습니다</div>
+
+    <div class="en-label" style="margin-top:24px">THIS WEEK</div>
+    <div class="heatmap-row">
+      <div class="hm-cell"><span class="dow">일</span><span class="box b3"></span><span class="dom">4</span></div>
+      <div class="hm-cell"><span class="dow">월</span><span class="box b2"></span><span class="dom">5</span></div>
+      <div class="hm-cell"><span class="dow">화</span><span class="box b2"></span><span class="dom">6</span></div>
+      <div class="hm-cell"><span class="dow">수</span><span class="box b3"></span><span class="dom">7</span></div>
+      <div class="hm-cell"><span class="dow">목</span><span class="box b2"></span><span class="dom">8</span></div>
+      <div class="hm-cell"><span class="dow">금</span><span class="box b1"></span><span class="dom">9</span></div>
+      <div class="hm-cell"><span class="dow">토</span><span class="box b2"></span><span class="dom" style="color:var(--burgundy);font-weight:600">10</span></div>
+    </div>
+
+    <div class="cat-list">
+      <div class="cat-row done">
+        <div><div class="cat-name">예배</div><div class="cat-en">WORSHIP</div></div>
+        <div class="check done">·</div>
+      </div>
+      <div class="cat-row done">
+        <div><div class="cat-name">말씀</div><div class="cat-en">WORD</div></div>
+        <div class="check done">·</div>
+      </div>
+      <div class="cat-row done">
+        <div><div class="cat-name">기도</div><div class="cat-en">PRAYER</div></div>
+        <div class="check done">·</div>
+      </div>
+      <div class="cat-row">
+        <div><div class="cat-name">큐티</div><div class="cat-en">QUIET TIME</div></div>
+        <div class="check"></div>
+      </div>
+      <div class="cat-row">
+        <div><div class="cat-name">암송</div><div class="cat-en">MEMORY</div></div>
+        <div class="check"></div>
+      </div>
+      <div class="cat-row">
+        <div><div class="cat-name">전도</div><div class="cat-en">EVANGELISM</div></div>
+        <div class="check"></div>
+      </div>
+      <div class="cat-row">
+        <div><div class="cat-name">봉사</div><div class="cat-en">SERVICE</div></div>
+        <div class="check"></div>
+      </div>
+    </div>
+
+    <div class="verse">
+      <div class="label">오늘의 말씀</div>
+      <div class="text">수고하고 무거운 짐 진 자들아 다 내게로 오라 내가 너희를 쉬게 하리라</div>
+      <div class="gold-rule" style="margin-top:12px"></div>
+      <div class="ref">마태복음 11:28 · 개역개정</div>
+    </div>
+  </div>
+  <div class="tabbar">
+    <div class="tabbar-item active">오늘</div>
+    <div class="tabbar-item">여정</div>
+    <div class="tabbar-item">구역</div>
+    <div class="tabbar-item">나</div>
+  </div>
+</div>
+</body>
+</html>
