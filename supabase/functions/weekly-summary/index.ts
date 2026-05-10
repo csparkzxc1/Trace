@@ -34,7 +34,12 @@ Deno.serve(async () => {
 
   if (e1) return new Response(e1.message, { status: 500 });
 
-  const messages: { to: string; title: string; body: string }[] = [];
+  const messages: {
+    to: string;
+    title: string;
+    body: string;
+    data: { route: string };
+  }[] = [];
 
   for (const row of settings ?? []) {
     const { data: checks } = await supabase
@@ -55,6 +60,7 @@ Deno.serve(async () => {
       to: (row as { push_token: string }).push_token,
       title: "흔적 · 한 주의 동행",
       body: summaryBody(traceDays),
+      data: { route: "journey" },
     });
   }
 

@@ -14,12 +14,14 @@ type Payload = {
 const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
 
 function buildMessage(slot: SlotKey) {
+  const data = { route: "today" };
   if (slot === "morning_prayer") {
     return {
       title: "흔적",
       body: "새벽의 자리, 천천히 시작합니다.",
       sound: null, // §7.3 무음·진동
       priority: "default",
+      data,
     };
   }
   if (slot === "qt") {
@@ -28,6 +30,7 @@ function buildMessage(slot: SlotKey) {
       body: "조용한 5분의 자리.",
       sound: null,
       priority: "default",
+      data: { route: "verse" },
     };
   }
   return {
@@ -35,6 +38,7 @@ function buildMessage(slot: SlotKey) {
     body: "오늘 동행하신 자리를 잠시 살펴봅니다.",
     sound: null,
     priority: "default",
+    data: { route: "today" },
   };
 }
 

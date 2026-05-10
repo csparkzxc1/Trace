@@ -20,6 +20,7 @@ import { useSessionBootstrap } from "@/lib/hooks/useSession";
 import { useAuthStore } from "@/lib/stores/auth";
 import * as authApi from "@/lib/api/auth";
 import { initAnalytics, setAnalyticsUser } from "@/lib/analytics";
+import { useNotificationRouter } from "@/features/notifications/use-notification-router";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -77,6 +78,7 @@ export default function RootLayout() {
 
   const [brandSplashDone, setBrandSplashDone] = useState(false);
   useSessionBootstrap();
+  useNotificationRouter();
 
   useEffect(() => {
     initAnalytics();
