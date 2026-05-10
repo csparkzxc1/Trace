@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
-import { Stack } from "expo-router";
+import { Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   NotoSerifKR_500Medium,
   NotoSerifKR_700Bold,
@@ -15,10 +16,51 @@ import {
 } from "@expo-google-fonts/cormorant-garamond";
 import { BrandSplash } from "@/components/brand";
 import { colors } from "@/theme/tokens";
+import { useSessionBootstrap } from "@/lib/hooks/useSession";
+import { useAuthStore } from "@/lib/stores/auth";
+import * as authApi from "@/lib/api/auth";
 
-SplashScreen.preventAutoHideAsync().catch(() => {
-  /* no-op */
+SplashScreen.preventAutoHideAsync().catch(() => {});
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30_000,
+      retry: 1,
+    },
+  },
 });
+
+function AuthGate() {
+  const segments = useSegments();
+  const router = useRouter();
+  const session = useAuthStore((s) => s.session);
+  const initialized = useAuthStore((s) => s.initialized);
+  const setProfile = useAuthStore((s) => s.setProfile);
+
+  useEffect(() => {
+    if (!initialized) return;
+    const inAuth = segments[0] === "(auth)";
+    if (!session && !inAuth) {
+      router.replace("/(auth)/welcome");
+    } else if (session && inAuth) {
+      router.replace("/(tabs)/today");
+    }
+  }, [session, initialized, segments, router]);
+
+  useEffect(() => {
+    if (!session?.user) {
+      setProfile(null);
+      return;
+    }
+    authApi
+      .fetchProfile(session.user.id)
+      .then((p) => setProfile(p))
+      .catch(() => setProfile(null));
+  }, [session?.user?.id, setProfile]);
+
+  return null;
+}
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useNotoFonts({
@@ -30,6 +72,7 @@ export default function RootLayout() {
   });
 
   const [brandSplashDone, setBrandSplashDone] = useState(false);
+  useSessionBootstrap();
 
   const onLayoutReady = useCallback(async () => {
     if (fontsLoaded || fontError) {
@@ -55,7 +98,8 @@ export default function RootLayout() {
   }
 
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
+      <AuthGate />
       <Stack
         screenOptions={{
           headerShown: false,
@@ -63,6 +107,6 @@ export default function RootLayout() {
         }}
       />
       <StatusBar style="dark" />
-    </>
+    </QueryClientProvider>
   );
 }
