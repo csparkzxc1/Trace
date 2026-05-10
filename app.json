@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "흔적 · Trace",
+    "slug": "trace",
+    "scheme": "trace",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/brand/app-icons/ios/AppIcon-1024.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/brand/splash/splash-light.svg",
+      "resizeMode": "contain",
+      "backgroundColor": "#F5F1E8"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "faith.trace.app",
+      "infoPlist": {
+        "CFBundleDevelopmentRegion": "ko",
+        "CFBundleAllowMixedLocalizations": true
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/brand/app-icons/android/ic_launcher_foreground.svg",
+        "backgroundColor": "#F5F1E8"
+      },
+      "package": "faith.trace.app"
+    },
+    "web": {
+      "favicon": "./assets/brand/monogram/monogram-light.svg"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "locales": {
+      "ko": "./src/i18n/ko.json"
+    }
+  }
+}
