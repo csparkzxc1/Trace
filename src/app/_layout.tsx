@@ -19,6 +19,7 @@ import { colors } from "@/theme/tokens";
 import { useSessionBootstrap } from "@/lib/hooks/useSession";
 import { useAuthStore } from "@/lib/stores/auth";
 import * as authApi from "@/lib/api/auth";
+import { initAnalytics, setAnalyticsUser } from "@/lib/analytics";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -51,8 +52,10 @@ function AuthGate() {
   useEffect(() => {
     if (!session?.user) {
       setProfile(null);
+      setAnalyticsUser(null);
       return;
     }
+    setAnalyticsUser(session.user.id);
     authApi
       .fetchProfile(session.user.id)
       .then((p) => setProfile(p))
@@ -73,6 +76,10 @@ export default function RootLayout() {
 
   const [brandSplashDone, setBrandSplashDone] = useState(false);
   useSessionBootstrap();
+
+  useEffect(() => {
+    initAnalytics();
+  }, []);
 
   const onLayoutReady = useCallback(async () => {
     if (fontsLoaded || fontError) {
