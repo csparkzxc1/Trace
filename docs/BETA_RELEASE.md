@@ -14,6 +14,11 @@
 - [ ] 토스페이먼츠 가맹점 신청 (KYC 1~2주 소요)
 - [ ] Anthropic API Key (ai-meditation 용)
 - [ ] Sentry / Mixpanel 프로젝트 (선택)
+- [ ] **Apple Sign-In 등록** (iOS 정책 4.8 — 다른 소셜 로그인 제공 시 필수):
+  - [ ] Apple Developer → Certificates → Identifiers → App ID 의 "Sign In with Apple" 활성화
+  - [ ] Service ID 생성 + Return URLs 에 `https://<supabase-project>.supabase.co/auth/v1/callback`
+  - [ ] Sign In with Apple 키 발급 + p8 파일 보관
+  - [ ] Supabase 대시보드 → Authentication → Providers → Apple 활성, Service ID/Key ID/p8 등록
 - [ ] **Kakao Developers 등록**:
   - [ ] 앱 생성 → REST API 키 + Client Secret 발급
   - [ ] 플랫폼 → iOS Bundle ID(`faith.trace.app`), Android 패키지명·키해시 등록

@@ -1,15 +1,16 @@
 import { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, Platform, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Wordmark } from "@/components/brand";
-import { Button, KakaoButton } from "@/components/ui";
-import { signInWithKakao } from "@/features/auth/oauth";
+import { Button, KakaoButton, AppleButton } from "@/components/ui";
+import { signInWithKakao, signInWithApple } from "@/features/auth/oauth";
 import { colors, fonts } from "@/theme/tokens";
 
 export default function Welcome() {
   const router = useRouter();
   const [kakaoBusy, setKakaoBusy] = useState(false);
+  const [appleBusy, setAppleBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function loginKakao() {
@@ -25,6 +26,19 @@ export default function Welcome() {
     setError("카카오 로그인을 마치지 못했습니다. 잠시 뒤 다시 시도해주세요.");
   }
 
+  async function loginApple() {
+    setAppleBusy(true);
+    setError(null);
+    const r = await signInWithApple();
+    setAppleBusy(false);
+    if (r.ok) {
+      router.replace("/(tabs)/today");
+      return;
+    }
+    if (r.reason === "cancelled") return;
+    setError("Apple 로그인을 마치지 못했습니다. 잠시 뒤 다시 시도해주세요.");
+  }
+
   return (
     <SafeAreaView style={styles.safe} edges={["top", "bottom"]}>
       <View style={styles.center}>
@@ -34,6 +48,12 @@ export default function Welcome() {
 
       <View style={styles.actions}>
         <KakaoButton loading={kakaoBusy} onPress={loginKakao} />
+        {Platform.OS === "ios" ? (
+          <>
+            <View style={{ height: 8 }} />
+            <AppleButton loading={appleBusy} onPress={loginApple} />
+          </>
+        ) : null}
         {error ? <Text style={styles.error}>{error}</Text> : null}
         <View style={styles.divider}>
           <View style={styles.line} />

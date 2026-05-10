@@ -6,3 +6,4 @@ export { Modal } from "./Modal";
 export { ScreenContainer } from "./ScreenContainer";
 export { StepHeader } from "./StepHeader";
 export { KakaoButton } from "./KakaoButton";
+export { AppleButton } from "./AppleButton";

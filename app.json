@@ -16,9 +16,11 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "faith.trace.app",
+      "usesAppleSignIn": true,
       "infoPlist": {
         "CFBundleDevelopmentRegion": "ko",
-        "CFBundleAllowMixedLocalizations": true
+        "CFBundleAllowMixedLocalizations": true,
+        "NSMicrophoneUsageDescription": "성경 암송 음성 학습에 사용됩니다."
       }
     },
     "android": {
@@ -35,6 +37,7 @@
       "expo-router",
       "expo-font",
       "expo-secure-store",
+      "expo-apple-authentication",
       [
         "expo-notifications",
         {

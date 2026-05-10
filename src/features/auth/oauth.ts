@@ -12,6 +12,7 @@
 
 import * as WebBrowser from "expo-web-browser";
 import * as Linking from "expo-linking";
+import { Platform } from "react-native";
 import { supabase } from "@/lib/supabase";
 
 WebBrowser.maybeCompleteAuthSession();
@@ -70,4 +71,53 @@ export async function signInWithKakao(): Promise<OAuthResult> {
   }
 
   return { ok: false, reason: "error", message: "no token in callback" };
+}
+
+// ============================================================================
+// Apple Sign-In (iOS 한정).
+// expo-apple-authentication 으로 native ID token 받아 supabase.auth.signInWithIdToken
+// (provider: apple) 으로 세션 생성. App Store 정책상 다른 소셜 로그인 제공 시
+// Apple Sign-In 도 동등하게 제공해야 함 (가이드라인 4.8).
+// ============================================================================
+
+export async function signInWithApple(): Promise<OAuthResult> {
+  if (Platform.OS !== "ios") {
+    return { ok: false, reason: "error", message: "iOS only" };
+  }
+  let AppleAuthentication: typeof import("expo-apple-authentication") | null;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    AppleAuthentication = require("expo-apple-authentication") as typeof import("expo-apple-authentication");
+  } catch {
+    return { ok: false, reason: "error", message: "module unavailable" };
+  }
+
+  try {
+    const credential = await AppleAuthentication.signInAsync({
+      requestedScopes: [
+        AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+        AppleAuthentication.AppleAuthenticationScope.EMAIL,
+      ],
+    });
+    const token = credential.identityToken;
+    if (!token) {
+      return { ok: false, reason: "error", message: "no identity token" };
+    }
+    const { error } = await supabase.auth.signInWithIdToken({
+      provider: "apple",
+      token,
+    });
+    if (error) return { ok: false, reason: "error", message: error.message };
+    return { ok: true };
+  } catch (e: unknown) {
+    const code = (e as { code?: string }).code;
+    if (code === "ERR_REQUEST_CANCELED") {
+      return { ok: false, reason: "cancelled" };
+    }
+    return {
+      ok: false,
+      reason: "error",
+      message: e instanceof Error ? e.message : "unknown",
+    };
+  }
 }
