@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Pressable, Linking } from "react-native";
 import { useRouter } from "expo-router";
-import { ScreenContainer, Input, Button } from "@/components/ui";
+import { ScreenContainer, Input, Button, Checkbox } from "@/components/ui";
 import { Wordmark } from "@/components/brand";
 import * as authApi from "@/lib/api/auth";
 import { colors, fonts } from "@/theme/tokens";
@@ -13,8 +13,14 @@ export default function SignUp() {
   const [displayName, setDisplayName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [agreeTerms, setAgreeTerms] = useState(false);
+  const [agreePrivacy, setAgreePrivacy] = useState(false);
 
   async function onSubmit() {
+    if (!agreeTerms || !agreePrivacy) {
+      setError("이용약관과 개인정보처리방침에 동의해주세요");
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -71,9 +77,32 @@ export default function SignUp() {
         onChangeText={setPassword}
       />
 
+      <View style={{ height: 24 }} />
+      <Checkbox
+        checked={agreeTerms}
+        onToggle={setAgreeTerms}
+        label="(필수) 이용약관에 동의합니다"
+      />
+      <Pressable
+        onPress={() => Linking.openURL("https://trace.faith/legal/terms")}
+      >
+        <Text style={styles.legalLink}>약관 보기</Text>
+      </Pressable>
+      <View style={{ height: 12 }} />
+      <Checkbox
+        checked={agreePrivacy}
+        onToggle={setAgreePrivacy}
+        label="(필수) 개인정보처리방침에 동의합니다"
+      />
+      <Pressable
+        onPress={() => Linking.openURL("https://trace.faith/legal/privacy")}
+      >
+        <Text style={styles.legalLink}>방침 보기</Text>
+      </Pressable>
+
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
-      <View style={{ height: 32 }} />
+      <View style={{ height: 24 }} />
       <Button
         label="계속하기"
         size="lg"
@@ -110,5 +139,13 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.burgundy,
     marginTop: 12,
+  },
+  legalLink: {
+    fontFamily: fonts.body,
+    fontSize: 12,
+    color: colors.gold,
+    marginLeft: 34,
+    marginTop: 4,
+    textDecorationLine: "underline",
   },
 });

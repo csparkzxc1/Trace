@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, Pressable, Linking, StyleSheet } from "react-native";
 import { ScreenContainer } from "@/components/ui";
 import { Wordmark } from "@/components/brand";
 import { colors, fonts } from "@/theme/tokens";
@@ -22,6 +22,22 @@ export default function About() {
         구역 멤버끼리는 서로의 노트나 메모를 보지 못합니다. 우리의 동행은
         자율 안에서 이어집니다.
       </Text>
+
+      <View style={{ height: 32 }} />
+
+      <View style={styles.legalRow}>
+        <Pressable
+          onPress={() => Linking.openURL("https://trace.faith/legal/terms")}
+        >
+          <Text style={styles.legalLink}>이용약관</Text>
+        </Pressable>
+        <Text style={styles.legalSep}>·</Text>
+        <Pressable
+          onPress={() => Linking.openURL("https://trace.faith/legal/privacy")}
+        >
+          <Text style={styles.legalLink}>개인정보처리방침</Text>
+        </Pressable>
+      </View>
     </ScreenContainer>
   );
 }
@@ -43,5 +59,22 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: colors.ink,
     lineHeight: 26,
+  },
+  legalRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
+  },
+  legalLink: {
+    fontFamily: fonts.body,
+    fontSize: 13,
+    color: colors.gold,
+    textDecorationLine: "underline",
+  },
+  legalSep: {
+    fontFamily: fonts.accent,
+    fontSize: 16,
+    color: colors.gold,
   },
 });
