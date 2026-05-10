@@ -50,6 +50,10 @@
 └─ docs/
 ```
 
+## 화면 목업
+
+[`docs/mockups/index.html`](./docs/mockups/index.html) 을 브라우저에서 열면 4개 탭(오늘·여정·구역·나)을 한 번에 미리볼 수 있습니다. 디자인 토큰·폰트는 실제 앱과 동일.
+
 ## 베타 / 출시
 
 - 절차: [`docs/BETA_RELEASE.md`](./docs/BETA_RELEASE.md)

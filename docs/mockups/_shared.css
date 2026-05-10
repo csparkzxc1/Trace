@@ -1,0 +1,155 @@
+/* 흔적 · Trace 목업 공용 스타일 — theme/tokens.ts 와 1:1 동기화 */
+:root {
+  --cream: #F5F1E8;
+  --cream-deep: #ECE5D3;
+  --paper: #FAF7EE;
+  --ink: #1F2A37;
+  --ink-soft: #4A5568;
+  --gold: #B8924F;
+  --gold-soft: #D4B57A;
+  --burgundy: #7A2E2E;
+  --sage: #6B7F5A;
+  --line: rgba(31, 42, 55, 0.12);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: #2A3744; }
+body {
+  font-family: 'Gowun Dodum', sans-serif;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 32px 16px;
+}
+
+/* 모바일 frame (iPhone 14 Pro: 393×852, scaled comfortably) */
+.frame {
+  width: 393px;
+  min-height: 800px;
+  background: var(--cream);
+  border-radius: 36px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  position: relative;
+}
+.notch {
+  position: absolute;
+  top: 8px; left: 50%;
+  transform: translateX(-50%);
+  width: 110px; height: 28px;
+  background: #000;
+  border-radius: 16px;
+  z-index: 5;
+}
+.statusbar {
+  height: 44px;
+  display: flex; justify-content: space-between; align-items: flex-end;
+  padding: 0 32px 6px;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--ink);
+}
+.tabbar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 80px;
+  background: var(--cream);
+  border-top: 1px solid var(--line);
+  display: flex;
+  padding: 8px 0 24px;
+}
+.tabbar-item {
+  flex: 1;
+  text-align: center;
+  font-family: 'Noto Serif KR', serif;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.tabbar-item.active { color: var(--ink); }
+.content {
+  padding: 0 24px 100px;
+}
+
+/* Typographic primitives */
+.eyebrow {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 12px;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.h1 {
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 500;
+  font-size: 28px;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.h2 {
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: -0.005em;
+  margin: 0;
+}
+.body {
+  font-family: 'Gowun Dodum', sans-serif;
+  font-size: 15px;
+  color: var(--ink);
+  line-height: 1.6;
+}
+.body-soft {
+  font-family: 'Gowun Dodum', sans-serif;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.numeric {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  color: var(--burgundy);
+}
+.numeric-italic {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 500;
+  color: var(--burgundy);
+}
+.tagline {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: var(--burgundy);
+}
+.en-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 0.18em;
+}
+.gold-rule {
+  height: 0.8px;
+  width: 32px;
+  background: var(--gold);
+}
+.card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 16px;
+}
+.btn-primary {
+  display: block;
+  width: 100%;
+  height: 48px;
+  background: var(--ink);
+  color: var(--cream);
+  border-radius: 4px;
+  font-family: 'Gowun Dodum', sans-serif;
+  font-size: 15px;
+  text-align: center;
+  line-height: 48px;
+}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>흔적 · Trace — 나</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Noto+Serif+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 15px;
+    color: var(--gold); margin-top: 6px;
+  }
+  .menu { display: flex; flex-direction: column; gap: 8px; margin-top: 24px; }
+  .menu-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 4px;
+  }
+  .menu-row .ko { font-family: 'Noto Serif KR', serif; font-size: 17px; }
+  .menu-row .en { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 11px; color: var(--gold); letter-spacing: 0.18em; margin-top: 2px; }
+  .chevron { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--ink-soft); }
+  .premium-badge {
+    display: inline-block; margin-left: 8px;
+    padding: 2px 8px;
+    background: var(--burgundy); color: var(--cream);
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 10px; letter-spacing: 0.15em;
+    border-radius: 2px;
+  }
+  .logout {
+    text-align: center; padding: 16px 0;
+    font-family: 'Gowun Dodum', sans-serif; font-size: 14px; color: var(--ink-soft);
+    margin-top: 32px;
+  }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="notch"></div>
+  <div class="statusbar"><span>9:24</span><span>·</span></div>
+
+  <div class="content">
+    <h1 class="h1" style="padding-top:8px">나</h1>
+    <div class="subtitle">김은혜 ·</div>
+
+    <div class="menu">
+      <div class="menu-row">
+        <div>
+          <div class="ko">자가진단</div>
+          <div class="en">SELF · ASSESSMENT</div>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="menu-row">
+        <div>
+          <div class="ko">성경암송</div>
+          <div class="en">MEMORY</div>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="menu-row">
+        <div>
+          <div class="ko">기도수첩</div>
+          <div class="en">PRAYER JOURNAL</div>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="menu-row">
+        <div>
+          <div class="ko">설정 <span class="premium-badge">PREMIUM</span></div>
+          <div class="en">SETTINGS</div>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="menu-row">
+        <div>
+          <div class="ko">흔적 이야기</div>
+          <div class="en">ABOUT</div>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+    </div>
+
+    <div class="logout">로그아웃</div>
+  </div>
+
+  <div class="tabbar">
+    <div class="tabbar-item">오늘</div>
+    <div class="tabbar-item">여정</div>
+    <div class="tabbar-item">구역</div>
+    <div class="tabbar-item active">나</div>
+  </div>
+</div>
+</body>
+</html>
