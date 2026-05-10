@@ -5,6 +5,11 @@ import * as checkinApi from "@/lib/api/checkin";
 import * as catApi from "@/lib/api/categories";
 import type { TrainingCategory, DailyCheck } from "@/types/database";
 import { todayIso, addDays, startOfWeek, rangeDays } from "@/lib/utils/date";
+import {
+  enqueueCheckin,
+  flushQueue,
+  readQueue,
+} from "@/lib/queue/offline-queue";
 
 export type TodayHookValue = {
   loading: boolean;
@@ -66,12 +71,13 @@ export function useToday(): TodayHookValue {
     async (category: TrainingCategory) => {
       if (!userId) return;
       const existing = dayChecks[category.id];
+      const intent = !existing?.completed;
       const optimistic: DailyCheck = {
         id: existing?.id ?? `optimistic-${category.id}`,
         user_id: userId,
         date,
         category_id: category.id,
-        completed: !existing?.completed,
+        completed: intent,
         duration_minutes: existing?.duration_minutes ?? null,
         note: existing?.note ?? null,
         scripture_ref: existing?.scripture_ref ?? null,
@@ -83,12 +89,47 @@ export function useToday(): TodayHookValue {
         const saved = await checkinApi.toggleCheckRpc(category.id, date);
         upsert(saved);
       } catch {
-        if (existing) upsert(existing);
-        else remove(date, category.id);
+        // 네트워크/일시적 오류 — 화면 상태는 그대로 유지하고 큐에 의도 보관.
+        // 재기동/재연결 시 flush 가 처리한다.
+        enqueueCheckin({
+          userId,
+          date,
+          categoryId: category.id,
+          intentCompleted: intent,
+        });
       }
     },
-    [userId, date, dayChecks, upsert, remove],
+    [userId, date, dayChecks, upsert],
   );
+
+  // 화면 진입 시 큐 플러시. 성공 시 저장된 체크 결과로 로컬 상태 갱신.
+  const flushPendingQueue = useCallback(async () => {
+    if (!userId) return;
+    if (readQueue().length === 0) return;
+    await flushQueue(async (item) => {
+      if (item.userId !== userId) return; // 다른 계정 데이터는 건드리지 않음
+      const current = await checkinApi
+        .fetchTodayChecks(item.userId, item.date)
+        .then((rows) => rows.find((r) => r.category_id === item.categoryId));
+      if (current?.completed === item.intentCompleted) return; // 이미 일치
+      const saved = await checkinApi.toggleCheckRpc(
+        item.categoryId,
+        item.date,
+      );
+      // 의도와 다르면 한 번 더 토글 (idempotent 보정)
+      if (saved.completed !== item.intentCompleted) {
+        await checkinApi.toggleCheckRpc(item.categoryId, item.date);
+      }
+    });
+    // 큐 처리 후 화면 데이터 재조회로 일관성 회복
+    await load();
+  }, [userId, load]);
+
+  useEffect(() => {
+    flushPendingQueue();
+  }, [flushPendingQueue]);
+
+  void remove;
 
   const completedCount = Object.values(dayChecks).filter(
     (c) => c.completed,
