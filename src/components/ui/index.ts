@@ -7,3 +7,4 @@ export { ScreenContainer } from "./ScreenContainer";
 export { StepHeader } from "./StepHeader";
 export { KakaoButton } from "./KakaoButton";
 export { AppleButton } from "./AppleButton";
+export { ChurchSearchInput } from "./ChurchSearchInput";

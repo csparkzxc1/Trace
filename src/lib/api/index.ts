@@ -9,3 +9,4 @@ export * as assessment from "./assessment";
 export * as journey from "./journey";
 export * as payment from "./payment";
 export * as meditation from "./meditation";
+export * as churches from "./churches";
