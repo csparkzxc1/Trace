@@ -8,7 +8,7 @@
     "icon": "./assets/brand/app-icons/ios/AppIcon-1024.png",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/brand/splash/splash-light.svg",
+      "image": "./assets/brand/splash/splash-light.png",
       "resizeMode": "contain",
       "backgroundColor": "#F5F1E8"
     },
@@ -25,13 +25,13 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/brand/app-icons/android/ic_launcher_foreground.svg",
+        "foregroundImage": "./assets/brand/app-icons/android/ic_launcher_foreground.png",
         "backgroundColor": "#F5F1E8"
       },
       "package": "faith.trace.app"
     },
     "web": {
-      "favicon": "./assets/brand/monogram/monogram-light.svg"
+      "favicon": "./assets/brand/monogram/monogram-light-32.png"
     },
     "plugins": [
       "expo-router",
@@ -41,7 +41,7 @@
       [
         "expo-notifications",
         {
-          "icon": "./assets/brand/monogram/monogram-light.svg",
+          "icon": "./assets/brand/notification-icon.png",
           "color": "#F5F1E8"
         }
       ]
