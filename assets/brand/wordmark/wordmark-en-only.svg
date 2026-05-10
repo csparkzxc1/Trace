@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 120" role="img" aria-label="Trace">
+  <title>Trace</title>
+  <text x="120" y="80"
+        font-family="'Cormorant Garamond', 'Times New Roman', serif"
+        font-style="italic"
+        font-weight="500"
+        font-size="72"
+        fill="#1F2A37"
+        text-anchor="middle">Trace</text>
+</svg>

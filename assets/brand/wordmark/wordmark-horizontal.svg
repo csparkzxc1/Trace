@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 120" role="img" aria-label="흔적 · Trace">
+  <title>흔적 · Trace</title>
+  <desc>Primary horizontal lockup. 흔적: Noto Serif KR Medium, ink. ·: Cormorant Garamond, gold. Trace: Cormorant Garamond Italic Medium, ink.</desc>
+  <g font-size="64" dominant-baseline="middle" text-anchor="middle">
+    <text x="105" y="60"
+          font-family="'Noto Serif KR', 'Apple SD Gothic Neo', serif"
+          font-weight="500"
+          fill="#1F2A37"
+          letter-spacing="-1.28">흔적</text>
+    <text x="220" y="58"
+          font-family="'Cormorant Garamond', 'Times New Roman', serif"
+          font-weight="400"
+          fill="#B8924F">·</text>
+    <text x="345" y="60"
+          font-family="'Cormorant Garamond', 'Times New Roman', serif"
+          font-style="italic"
+          font-weight="500"
+          fill="#1F2A37">Trace</text>
+  </g>
+</svg>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" role="img" aria-label="흔적 · Trace 스플래시">
+  <title>Splash (Light)</title>
+  <rect width="1080" height="1920" fill="#F5F1E8"/>
+  <g text-anchor="middle">
+    <text x="345" y="936"
+          font-family="'Noto Serif KR', 'Apple SD Gothic Neo', serif"
+          font-weight="500"
+          font-size="120"
+          fill="#1F2A37"
+          letter-spacing="-2.4">흔적</text>
+    <text x="540" y="930"
+          font-family="'Cormorant Garamond', 'Times New Roman', serif"
+          font-weight="400"
+          font-size="120"
+          fill="#B8924F">·</text>
+    <text x="735" y="936"
+          font-family="'Cormorant Garamond', 'Times New Roman', serif"
+          font-style="italic"
+          font-weight="500"
+          font-size="120"
+          fill="#1F2A37">Trace</text>
+    <text x="540" y="1100"
+          font-family="'Cormorant Garamond', 'Times New Roman', serif"
+          font-style="italic"
+          font-weight="500"
+          font-size="36"
+          fill="#7A2E2E">신앙은 점수가 아닌 흔적입니다.</text>
+  </g>
+</svg>
