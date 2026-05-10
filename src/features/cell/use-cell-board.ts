@@ -1,8 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import * as cellApi from "@/lib/api/cell";
+import {
+  subscribeCellChecks,
+  subscribeIncomingEncouragements,
+  type RealtimeClient,
+} from "./realtime";
 import type { Encouragement, UserProfile } from "@/types/database";
 import { todayIso } from "@/lib/utils/date";
+
+// 실제 supabase 클라이언트는 우리 최소 인터페이스의 상위 집합 — 캐스팅으로 사용.
+const realtime = supabase as unknown as RealtimeClient;
 
 export type BoardEntry = {
   member: UserProfile;
@@ -48,52 +56,17 @@ export function useCellBoard(cellId: string | null, viewerId: string | null) {
   // Realtime: 같은 구역 멤버의 daily_checks 변경 시 board 재조회
   useEffect(() => {
     if (!cellId) return;
-    const channel = supabase
-      .channel(`cell:${cellId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "daily_checks",
-        },
-        (payload) => {
-          const row = (payload.new ?? payload.old) as
-            | { user_id?: string }
-            | null;
-          if (!row?.user_id) return;
-          if (entries.some((e) => e.member.id === row.user_id)) {
-            reload();
-          }
-        },
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return subscribeCellChecks(realtime, cellId, (row) => {
+      if (entries.some((e) => e.member.id === row.user_id)) {
+        reload();
+      }
+    });
   }, [cellId, entries, reload]);
 
   // Realtime: 본인이 받은 격려를 즉시 노출
   useEffect(() => {
     if (!viewerId) return;
-    const channel = supabase
-      .channel(`encouragements:${viewerId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "encouragements",
-          filter: `to_user_id=eq.${viewerId}`,
-        },
-        (payload) => {
-          setRecent(payload.new as Encouragement);
-        },
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return subscribeIncomingEncouragements(realtime, viewerId, setRecent);
   }, [viewerId]);
 
   return {
