@@ -1,20 +1,27 @@
 import { useEffect, useState } from "react";
 import { View, Text, ScrollView, StyleSheet, Pressable } from "react-native";
+import { useRouter } from "expo-router";
 import { ScreenContainer, Input, Button, Card, Checkbox } from "@/components/ui";
 import { useAuthStore } from "@/lib/stores/auth";
 import * as prayerApi from "@/lib/api/prayer";
 import type { PrayerJournalEntry } from "@/types/database";
 import { isSafeCopy } from "@/lib/utils/microcopy";
+import { isPremiumActive, FREE_PRAYER_LIMIT } from "@/lib/utils/premium";
 import { colors, fonts } from "@/theme/tokens";
 
 export default function PrayerArchive() {
+  const router = useRouter();
   const userId = useAuthStore((s) => s.user?.id);
+  const profile = useAuthStore((s) => s.profile);
+  const isPremium = isPremiumActive(profile);
   const [entries, setEntries] = useState<PrayerJournalEntry[]>([]);
   const [adding, setAdding] = useState(false);
   const [title, setTitle] = useState("");
   const [request, setRequest] = useState("");
   const [shareToCell, setShareToCell] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const reachedFreeLimit = !isPremium && entries.length >= FREE_PRAYER_LIMIT;
 
   const reload = async () => {
     if (!userId) return;
@@ -28,6 +35,12 @@ export default function PrayerArchive() {
 
   async function add() {
     if (!userId) return;
+    if (reachedFreeLimit) {
+      setError(
+        `Free 에서는 기도제목을 ${FREE_PRAYER_LIMIT}개까지 보관할 수 있습니다. Premium 으로 무제한 보관해보세요.`,
+      );
+      return;
+    }
     if (!isSafeCopy(request) || !isSafeCopy(title)) {
       setError("따뜻한 표현으로 다시 적어주세요");
       return;
@@ -63,9 +76,27 @@ export default function PrayerArchive() {
           개인 메모는 외부에 공유되지 않습니다. 응답 노트는 어떤 경우에도 비공개입니다.
         </Text>
 
+        {!isPremium ? (
+          <Text style={styles.limit}>
+            <Text style={styles.numericInline}>{entries.length}</Text>
+            <Text> / {FREE_PRAYER_LIMIT} (Free)</Text>
+          </Text>
+        ) : null}
+
         <View style={{ height: 16 }} />
 
-        {!adding ? (
+        {reachedFreeLimit ? (
+          <Pressable
+            onPress={() => router.push("/(tabs)/self/settings/subscription")}
+          >
+            <Card>
+              <Text style={styles.upsellLabel}>PREMIUM</Text>
+              <Text style={styles.upsellBody}>
+                기도제목을 무제한으로 보관하고 싶다면 Premium 을 살펴보세요.
+              </Text>
+            </Card>
+          </Pressable>
+        ) : !adding ? (
           <Button label="새 제목 추가" onPress={() => setAdding(true)} />
         ) : (
           <View>
@@ -172,5 +203,27 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.burgundy,
     marginTop: 8,
+  },
+  limit: {
+    marginTop: 8,
+  },
+  numericInline: {
+    fontFamily: fonts.accentBold,
+    fontSize: 14,
+    color: colors.burgundy,
+  },
+  upsellLabel: {
+    fontFamily: fonts.accent,
+    fontStyle: "italic",
+    fontSize: 11,
+    color: colors.gold,
+    letterSpacing: 1.6,
+  },
+  upsellBody: {
+    fontFamily: fonts.body,
+    fontSize: 14,
+    color: colors.ink,
+    marginTop: 8,
+    lineHeight: 22,
   },
 });

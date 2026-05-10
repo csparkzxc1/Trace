@@ -11,6 +11,7 @@ const ITEMS: MenuItem[] = [
   { ko: "자가진단", en: "Self-Assessment", href: "/(tabs)/self/assessment" },
   { ko: "성경암송", en: "Memory", href: "/(tabs)/self/memory" },
   { ko: "기도수첩", en: "Prayer Journal", href: "/(tabs)/self/prayer-archive" },
+  { ko: "AI 묵상 동반자", en: "Meditation", href: "/(tabs)/self/meditation" },
   { ko: "설정", en: "Settings", href: "/(tabs)/self/settings" },
   { ko: "흔적 이야기", en: "About", href: "/(tabs)/self/about" },
 ];
