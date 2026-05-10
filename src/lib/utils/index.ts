@@ -5,3 +5,4 @@ export * from "./srs";
 export * from "./categories";
 export * from "./rhythm";
 export * from "./premium";
+export * from "./text-similarity";

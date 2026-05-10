@@ -4,11 +4,16 @@ import { useRouter } from "expo-router";
 import { ScreenContainer, Card, Button } from "@/components/ui";
 import { useAuthStore } from "@/lib/stores/auth";
 import * as memoryApi from "@/lib/api/memory";
+import { useVoiceRecorder } from "@/features/memory/use-voice-recorder";
+import {
+  similarity,
+  qualityFromSimilarity,
+} from "@/lib/utils/text-similarity";
 import type { ScriptureMemory } from "@/types/database";
 import { SRS_QUALITY_LABELS_KO, type SrsQuality } from "@/types/domain";
 import { colors, fonts } from "@/theme/tokens";
 
-type Mode = "blank" | "first-letter" | "full";
+type Mode = "blank" | "first-letter" | "full" | "voice";
 
 function maskBlanks(text: string): string {
   return text.replace(/[가-힣]{2,}/g, (w) =>
@@ -33,6 +38,8 @@ export default function MemoryStudy() {
   }, [userId]);
 
   const card = queue[index];
+  const voice = useVoiceRecorder();
+  const [voiceScore, setVoiceScore] = useState<number | null>(null);
 
   async function grade(quality: SrsQuality) {
     if (!card) return;
@@ -43,6 +50,15 @@ export default function MemoryStudy() {
     }
     setIndex(index + 1);
     setMode("blank");
+    setVoiceScore(null);
+    voice.reset();
+  }
+
+  async function stopAndScore() {
+    const text = await voice.stop();
+    if (text == null || !card) return;
+    const score = similarity(card.text, text);
+    setVoiceScore(score);
   }
 
   if (!card) {
@@ -82,18 +98,64 @@ export default function MemoryStudy() {
 
       <View style={{ height: 16 }} />
       <View style={styles.modeRow}>
-        {(["blank", "first-letter", "full"] as Mode[]).map((m) => (
+        {(["blank", "first-letter", "full", "voice"] as Mode[]).map((m) => (
           <Pressable
             key={m}
             onPress={() => setMode(m)}
             style={[styles.modeBtn, mode === m && styles.modeBtnActive]}
           >
             <Text style={styles.modeLabel}>
-              {m === "blank" ? "빈칸" : m === "first-letter" ? "첫글자" : "정답"}
+              {m === "blank"
+                ? "빈칸"
+                : m === "first-letter"
+                  ? "첫글자"
+                  : m === "voice"
+                    ? "음성"
+                    : "정답"}
             </Text>
           </Pressable>
         ))}
       </View>
+
+      {mode === "voice" ? (
+        <View style={{ marginTop: 16 }}>
+          {voice.state === "idle" || voice.state === "ready" ? (
+            <Button
+              label={voice.state === "ready" ? "다시 녹음" : "녹음 시작"}
+              onPress={voice.start}
+            />
+          ) : null}
+          {voice.state === "recording" ? (
+            <Button label="녹음 끝내기" onPress={stopAndScore} />
+          ) : null}
+          {voice.state === "processing" ? (
+            <Text style={styles.voiceHint}>전사 중…</Text>
+          ) : null}
+          {voice.state === "error" ? (
+            <Text style={styles.voiceHint}>
+              마이크 권한을 허용한 뒤 다시 시도해주세요
+            </Text>
+          ) : null}
+          {voice.transcript ? (
+            <View style={styles.transcriptBox}>
+              <Text style={styles.transcriptLabel}>들은 말</Text>
+              <Text style={styles.transcript}>{voice.transcript}</Text>
+              {voiceScore !== null ? (
+                <Text style={styles.scoreLine}>
+                  유사도{" "}
+                  <Text style={styles.scoreNum}>
+                    {Math.round(voiceScore * 100)}
+                  </Text>
+                  % · 추천 채점{" "}
+                  <Text style={styles.scoreNum}>
+                    {SRS_QUALITY_LABELS_KO[qualityFromSimilarity(voiceScore)]}
+                  </Text>
+                </Text>
+              ) : null}
+            </View>
+          ) : null}
+        </View>
+      ) : null}
 
       <View style={{ height: 24 }} />
 
@@ -190,5 +252,44 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: colors.ink,
     marginBottom: 16,
+  },
+  voiceHint: {
+    fontFamily: fonts.body,
+    fontSize: 13,
+    color: colors.inkSoft,
+    textAlign: "center",
+    marginTop: 12,
+  },
+  transcriptBox: {
+    marginTop: 16,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: colors.paper,
+    borderRadius: 4,
+  },
+  transcriptLabel: {
+    fontFamily: fonts.accent,
+    fontStyle: "italic",
+    fontSize: 11,
+    color: colors.gold,
+    letterSpacing: 1.6,
+  },
+  transcript: {
+    fontFamily: fonts.body,
+    fontSize: 14,
+    color: colors.ink,
+    marginTop: 6,
+    lineHeight: 22,
+  },
+  scoreLine: {
+    fontFamily: fonts.body,
+    fontSize: 13,
+    color: colors.inkSoft,
+    marginTop: 12,
+  },
+  scoreNum: {
+    fontFamily: fonts.accentBold,
+    color: colors.burgundy,
   },
 });
