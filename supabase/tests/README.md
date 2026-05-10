@@ -21,6 +21,10 @@
 | 8b | prayer_journal_shared는 is_shared_to_cell=true만 노출 | 1 row |
 | 9 | 타인 visibility_settings UPDATE 차단 | 0 affected |
 | 10 | 다른 구역에서 prayer_journal_shared 차단 | 0 rows |
+| 11a | billing_keys SELECT 권한 차단 (authenticated) | exception |
+| 11b | billing_keys INSERT 권한 차단 (authenticated) | exception |
+| 12a | 본인 billing_key_summary 노출 | 1 row |
+| 12b | 타인 billing_key_summary 차단 | 0 rows |
 
 ## 실행
 

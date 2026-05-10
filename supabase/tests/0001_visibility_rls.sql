@@ -311,6 +311,59 @@ begin
   perform _expect('10) 다른 구역에서 prayer_journal_shared 차단', cnt, 0);
 end$$;
 
+-- ============================================================================
+-- 시나리오 11: billing_keys 본 테이블은 authenticated 가 어떤 쿼리도 못 던진다
+-- ============================================================================
+do $$
+declare
+  v_a1 uuid := current_setting('app.test_member_a1')::uuid;
+begin
+  perform _as_user(v_a1);
+  begin
+    perform * from billing_keys where user_id = v_a1;
+    raise exception 'FAIL [11a] billing_keys SELECT 가 통과됨';
+  exception
+    when insufficient_privilege then
+      raise notice 'OK   [11a] billing_keys SELECT 권한 차단';
+    when others then
+      raise notice 'OK   [11a] billing_keys SELECT 차단 (% / %)', SQLSTATE, SQLERRM;
+  end;
+
+  begin
+    insert into billing_keys (user_id, billing_key) values (v_a1, 'fake');
+    raise exception 'FAIL [11b] billing_keys INSERT 가 통과됨';
+  exception
+    when insufficient_privilege then
+      raise notice 'OK   [11b] billing_keys INSERT 권한 차단';
+    when others then
+      raise notice 'OK   [11b] billing_keys INSERT 차단 (% / %)', SQLSTATE, SQLERRM;
+  end;
+end$$;
+
+-- ============================================================================
+-- 시나리오 12: billing_key_summary 뷰는 본인 row 만 노출 (다른 사용자 ID 검색 시 0)
+-- ============================================================================
+do $$
+declare
+  v_a1 uuid := current_setting('app.test_member_a1')::uuid;
+  v_a2 uuid := current_setting('app.test_member_a2')::uuid;
+  cnt int;
+begin
+  -- service_role 로 fixture 삽입
+  perform set_config('role', 'service_role', true);
+  insert into billing_keys (user_id, billing_key, card_last4)
+    values (v_a1, 'bkey_test_aaaaaaaa', '1234')
+    on conflict (user_id) do update set billing_key = excluded.billing_key;
+
+  perform _as_user(v_a1);
+  select count(*) into cnt from billing_key_summary where user_id = v_a1;
+  perform _expect('12a) 본인 billing_key_summary 노출', cnt, 1);
+
+  perform _as_user(v_a2);
+  select count(*) into cnt from billing_key_summary where user_id = v_a1;
+  perform _expect('12b) 타인 billing_key_summary 차단', cnt, 0);
+end$$;
+
 raise notice E'\n=== 모든 가시성 RLS 시나리오 통과 ===\n';
 
 -- 모든 변경은 ROLLBACK

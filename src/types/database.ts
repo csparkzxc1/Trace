@@ -154,6 +154,16 @@ export type NotificationSettings = {
   updated_at: Iso;
 }
 
+export type BillingKey = {
+  user_id: string;
+  billing_key: string;
+  card_company: string | null;
+  card_last4: string | null;
+  status: "active" | "suspended" | "revoked";
+  issued_at: Iso;
+  updated_at: Iso;
+}
+
 // Insert/Update를 Partial로 완화 — 실제 DB가 RLS·column default·NOT NULL을
 // 검증한다. 클라이언트 타입 단계에서 모든 필수 컬럼을 강제하면 upsert·patch
 // 시그니처가 비현실적으로 무거워지므로 Supabase 공식 codegen과 동일한 정책.
@@ -179,6 +189,7 @@ export type Database = {
       encouragements: TableEntry<Encouragement>;
       visibility_settings: TableEntry<VisibilitySettings>;
       notification_settings: TableEntry<NotificationSettings>;
+      billing_keys: TableEntry<BillingKey>;
     };
     Views: {
       daily_checks_public: {
@@ -189,6 +200,13 @@ export type Database = {
         Row: Pick<
           PrayerJournalEntry,
           "id" | "user_id" | "title" | "request" | "scripture_ref" | "created_at"
+        >;
+        Relationships: [];
+      };
+      billing_key_summary: {
+        Row: Pick<
+          BillingKey,
+          "user_id" | "card_company" | "card_last4" | "status" | "issued_at"
         >;
         Relationships: [];
       };

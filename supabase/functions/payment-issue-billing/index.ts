@@ -69,10 +69,23 @@ Deno.serve(async (req) => {
     cardNumber?: string;
   };
 
-  // 빌링키 보관 — 별도 private 테이블이 없으므로 본 스텁에선
-  // notification_settings.push_token 같은 곳에 두지 않고, 가맹점 운영 콘솔에
-  // 수동 보관하거나 별도 billing_keys 테이블을 만들어 service_role 만 접근하게
-  // 한다. 출시 직전 마이그레이션 0005 에서 billing_keys 테이블 추가 예정.
+  const cardLast4 = tossData.cardNumber?.slice(-4) ?? null;
+
+  // billing_keys 테이블 (service_role 전용) 에 저장. 클라이언트는 절대 접근 X.
+  const { error: bkError } = await supabase
+    .from("billing_keys")
+    .upsert({
+      user_id: user.id,
+      billing_key: tossData.billingKey,
+      card_company: tossData.cardCompany ?? null,
+      card_last4: cardLast4,
+      status: "active",
+    });
+  if (bkError) {
+    return new Response(`failed to persist billing key: ${bkError.message}`, {
+      status: 500,
+    });
+  }
 
   const until = new Date(Date.now() + 31 * 86400_000).toISOString().slice(0, 10);
   await supabase
@@ -83,8 +96,7 @@ Deno.serve(async (req) => {
   return Response.json({
     ok: true,
     cardCompany: tossData.cardCompany ?? null,
-    // 카드번호 마지막 4자리만 노출
-    cardLast4: tossData.cardNumber?.slice(-4) ?? null,
+    cardLast4,
     premiumUntil: until,
   });
 });
