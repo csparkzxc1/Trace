@@ -26,6 +26,22 @@ export default function SubscriptionSettings() {
     setModalOpen(true);
   }
 
+  async function cancelFlow() {
+    if (!userId) return;
+    setBusy(true);
+    setHint(null);
+    try {
+      await paymentApi.cancelSubscription();
+      const fresh = await authApi.fetchProfile(userId);
+      setProfile(fresh);
+      setHint("자동 결제가 중단되었습니다. 동행은 그대로 이어집니다.");
+    } catch {
+      setHint("해지를 마치지 못했습니다. 잠시 뒤 다시 시도해주세요.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function onAuthKey(authKey: string) {
     if (!userId) return;
     setModalOpen(false);
@@ -95,7 +111,22 @@ export default function SubscriptionSettings() {
             있으며, 해지 후에도 결제 주기 끝까지 Premium이 유지됩니다.
           </Text>
         </>
-      ) : null}
+      ) : (
+        <>
+          <View style={{ height: 24 }} />
+          <Button
+            label="구독 해지"
+            variant="secondary"
+            loading={busy}
+            onPress={cancelFlow}
+          />
+          {hint ? <Text style={styles.hint}>{hint}</Text> : null}
+          <Text style={styles.terms}>
+            해지 즉시 자동 결제가 중단됩니다. 결제 주기({profile?.premium_until})
+            까지는 Premium 기능을 그대로 사용할 수 있습니다.
+          </Text>
+        </>
+      )}
 
       {userId ? (
         <BillingAuthModal
