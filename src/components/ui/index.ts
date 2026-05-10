@@ -5,3 +5,4 @@ export { Checkbox } from "./Checkbox";
 export { Modal } from "./Modal";
 export { ScreenContainer } from "./ScreenContainer";
 export { StepHeader } from "./StepHeader";
+export { KakaoButton } from "./KakaoButton";

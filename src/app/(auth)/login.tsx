@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import { ScreenContainer, Input, Button } from "@/components/ui";
+import { ScreenContainer, Input, Button, KakaoButton } from "@/components/ui";
 import { Wordmark } from "@/components/brand";
 import * as authApi from "@/lib/api/auth";
+import { signInWithKakao } from "@/features/auth/oauth";
 import { colors, fonts } from "@/theme/tokens";
 
 export default function Login() {
@@ -12,6 +13,19 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [kakaoBusy, setKakaoBusy] = useState(false);
+
+  async function loginKakao() {
+    setKakaoBusy(true);
+    setError(null);
+    const r = await signInWithKakao();
+    setKakaoBusy(false);
+    if (r.ok) {
+      router.replace("/(tabs)/today");
+    } else if (r.reason !== "cancelled") {
+      setError("카카오 로그인을 마치지 못했습니다");
+    }
+  }
 
   async function onSubmit() {
     setLoading(true);
@@ -59,6 +73,12 @@ export default function Login() {
         loading={loading}
         onPress={onSubmit}
       />
+      <View style={styles.divider}>
+        <View style={styles.dividerLine} />
+        <Text style={styles.dividerLabel}>또는</Text>
+        <View style={styles.dividerLine} />
+      </View>
+      <KakaoButton loading={kakaoBusy} onPress={loginKakao} />
       <View style={{ height: 12 }} />
       <Button
         label="계정 만들기"
@@ -82,5 +102,21 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.burgundy,
     marginTop: 12,
+  },
+  divider: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 16,
+    gap: 12,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: colors.line,
+  },
+  dividerLabel: {
+    fontFamily: fonts.body,
+    fontSize: 12,
+    color: colors.inkSoft,
   },
 });

@@ -1,12 +1,29 @@
+import { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Wordmark } from "@/components/brand";
-import { Button } from "@/components/ui";
+import { Button, KakaoButton } from "@/components/ui";
+import { signInWithKakao } from "@/features/auth/oauth";
 import { colors, fonts } from "@/theme/tokens";
 
 export default function Welcome() {
   const router = useRouter();
+  const [kakaoBusy, setKakaoBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function loginKakao() {
+    setKakaoBusy(true);
+    setError(null);
+    const r = await signInWithKakao();
+    setKakaoBusy(false);
+    if (r.ok) {
+      router.replace("/(tabs)/today");
+      return;
+    }
+    if (r.reason === "cancelled") return;
+    setError("카카오 로그인을 마치지 못했습니다. 잠시 뒤 다시 시도해주세요.");
+  }
 
   return (
     <SafeAreaView style={styles.safe} edges={["top", "bottom"]}>
@@ -16,8 +33,15 @@ export default function Welcome() {
       </View>
 
       <View style={styles.actions}>
+        <KakaoButton loading={kakaoBusy} onPress={loginKakao} />
+        {error ? <Text style={styles.error}>{error}</Text> : null}
+        <View style={styles.divider}>
+          <View style={styles.line} />
+          <Text style={styles.dividerLabel}>또는</Text>
+          <View style={styles.line} />
+        </View>
         <Button
-          label="시작하기"
+          label="이메일로 시작하기"
           size="lg"
           onPress={() => router.push("/(auth)/onboarding/step-1-welcome")}
         />
@@ -54,5 +78,28 @@ const styles = StyleSheet.create({
   },
   actions: {
     paddingBottom: 24,
+  },
+  error: {
+    fontFamily: fonts.body,
+    fontSize: 13,
+    color: colors.burgundy,
+    marginTop: 8,
+    textAlign: "center",
+  },
+  divider: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 16,
+    gap: 12,
+  },
+  line: {
+    flex: 1,
+    height: 1,
+    backgroundColor: colors.line,
+  },
+  dividerLabel: {
+    fontFamily: fonts.body,
+    fontSize: 12,
+    color: colors.inkSoft,
   },
 });
