@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, ScrollView, StyleSheet, Pressable } from "react-native";
+import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer, Button, Card } from "@/components/ui";
 import { useAuthStore } from "@/lib/stores/auth";

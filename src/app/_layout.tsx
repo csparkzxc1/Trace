@@ -49,18 +49,19 @@ function AuthGate() {
     }
   }, [session, initialized, segments, router]);
 
+  const userId = session?.user?.id;
   useEffect(() => {
-    if (!session?.user) {
+    if (!userId) {
       setProfile(null);
       setAnalyticsUser(null);
       return;
     }
-    setAnalyticsUser(session.user.id);
+    setAnalyticsUser(userId);
     authApi
-      .fetchProfile(session.user.id)
+      .fetchProfile(userId)
       .then((p) => setProfile(p))
       .catch(() => setProfile(null));
-  }, [session?.user?.id, setProfile]);
+  }, [userId, setProfile]);
 
   return null;
 }

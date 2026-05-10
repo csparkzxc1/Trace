@@ -5,6 +5,8 @@
 // SRS 음성 모드에서는 90%+ 만 "완벽", 70~89% "쉬움", 50~69% "보통",
 // 50% 미만 "어려움" 으로 매핑하는 휴리스틱에 사용.
 
+import type { SrsQuality } from "@/types/domain";
+
 const KEEP_RE = /[^가-힯ㄱ-ㆎa-zA-Z0-9]/g;
 
 export function normalizeText(s: string): string {
@@ -40,8 +42,6 @@ export function similarity(target: string, said: string): number {
   const maxLen = Math.max(a.length, b.length);
   return 1 - dist / maxLen;
 }
-
-import type { SrsQuality } from "@/types/domain";
 
 export function qualityFromSimilarity(score: number): SrsQuality {
   if (score >= 0.9) return 3;

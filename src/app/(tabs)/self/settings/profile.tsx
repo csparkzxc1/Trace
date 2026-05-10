@@ -13,7 +13,7 @@ export default function ProfileSettings() {
 
   useEffect(() => {
     if (profile) setDisplayName(profile.display_name);
-  }, [profile?.id]);
+  }, [profile]);
 
   async function save() {
     if (!profile) return;

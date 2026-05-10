@@ -25,7 +25,7 @@ export default function CategoryDetail() {
     setDuration(existing?.duration_minutes?.toString() ?? "");
     setNote(existing?.note ?? "");
     setScripture(existing?.scripture_ref ?? "");
-  }, [existing?.id]);
+  }, [existing]);
 
   async function save() {
     if (!userId || !id) return;

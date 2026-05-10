@@ -6,7 +6,7 @@
 
 import type { CategorySlug } from "@/types/database";
 import { DEFAULT_CATEGORIES } from "./categories";
-import { todayIso, addDays } from "./date";
+import { todayIso } from "./date";
 
 export type DayActivity = {
   date: string;

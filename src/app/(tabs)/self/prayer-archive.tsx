@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { View, Text, ScrollView, StyleSheet, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer, Input, Button, Card, Checkbox } from "@/components/ui";
@@ -23,15 +23,15 @@ export default function PrayerArchive() {
 
   const reachedFreeLimit = !isPremium && entries.length >= FREE_PRAYER_LIMIT;
 
-  const reload = async () => {
+  const reload = useCallback(async () => {
     if (!userId) return;
     const list = await prayerApi.fetchMyPrayerEntries(userId);
     setEntries(list);
-  };
+  }, [userId]);
 
   useEffect(() => {
     reload().catch(() => {});
-  }, [userId]);
+  }, [reload]);
 
   async function add() {
     if (!userId) return;

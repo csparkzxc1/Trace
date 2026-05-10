@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { View, Text, Animated, StyleSheet, useColorScheme } from "react-native";
+import { View, Animated, StyleSheet, useColorScheme } from "react-native";
 import { colors, fonts, motion } from "@/theme/tokens";
 import { Wordmark } from "./Wordmark";
 
