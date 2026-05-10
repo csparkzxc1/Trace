@@ -12,7 +12,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#F5F1E8"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "faith.trace.app",
@@ -20,7 +22,8 @@
       "infoPlist": {
         "CFBundleDevelopmentRegion": "ko",
         "CFBundleAllowMixedLocalizations": true,
-        "NSMicrophoneUsageDescription": "성경 암송 음성 학습에 사용됩니다."
+        "NSMicrophoneUsageDescription": "성경 암송 음성 학습에 사용됩니다.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -51,6 +54,21 @@
     },
     "locales": {
       "ko": "./src/i18n/ko.json"
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "85030f66-7505-4059-b3b8-bf79e873e615"
+      }
+    },
+    "owner": "csparkzxc",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/85030f66-7505-4059-b3b8-bf79e873e615"
     }
   }
 }
