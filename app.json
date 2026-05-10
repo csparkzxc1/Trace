@@ -34,7 +34,14 @@
     "plugins": [
       "expo-router",
       "expo-font",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/brand/monogram/monogram-light.svg",
+          "color": "#F5F1E8"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

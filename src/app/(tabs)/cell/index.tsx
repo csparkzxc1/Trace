@@ -1,44 +1,33 @@
-import { useEffect, useState } from "react";
-import { View, Text, ScrollView, StyleSheet, Pressable } from "react-native";
+import { useEffect } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  Pressable,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/ui";
 import { MemberRow } from "@/components/cell";
 import { useAuthStore } from "@/lib/stores/auth";
-import * as cellApi from "@/lib/api/cell";
-import type { UserProfile } from "@/types/database";
-import { todayIso } from "@/lib/utils/date";
+import { useCellBoard } from "@/features/cell/use-cell-board";
 import { colors, fonts } from "@/theme/tokens";
 
 export default function CellBoard() {
   const router = useRouter();
   const profile = useAuthStore((s) => s.profile);
+  const userId = useAuthStore((s) => s.user?.id) ?? null;
   const cellId = profile?.cell_id ?? null;
-  const [members, setMembers] = useState<UserProfile[]>([]);
-  const [todayCounts, setTodayCounts] = useState<Map<string, number | null>>(
-    new Map(),
+  const { entries, recentEncouragement, dismissEncouragement } = useCellBoard(
+    cellId,
+    userId,
   );
 
   useEffect(() => {
-    if (!cellId) return;
-    const date = todayIso();
-    Promise.all([
-      cellApi.fetchCellMembers(cellId),
-      cellApi.fetchCellPublicChecks(cellId, date),
-    ])
-      .then(([m, checks]) => {
-        // 시간순 정렬 (§7.2 랭킹 금지)
-        setMembers(m.slice().sort((a, b) => a.display_name.localeCompare(b.display_name, "ko")));
-        const map = new Map<string, number | null>();
-        for (const member of m) {
-          const memberChecks = checks.filter(
-            (c) => c.user_id === member.id && c.completed,
-          );
-          map.set(member.id, memberChecks.length > 0 ? memberChecks.length : 0);
-        }
-        setTodayCounts(map);
-      })
-      .catch(() => {});
-  }, [cellId]);
+    if (!recentEncouragement) return;
+    const t = setTimeout(dismissEncouragement, 5000);
+    return () => clearTimeout(t);
+  }, [recentEncouragement, dismissEncouragement]);
 
   if (!cellId) {
     return (
@@ -59,32 +48,47 @@ export default function CellBoard() {
       <View style={styles.headerRow}>
         <Text style={styles.title}>구역</Text>
         <Pressable
-          onPress={() =>
-            router.push("/(tabs)/cell/visibility" as never)
-          }
+          onPress={() => router.push("/(tabs)/cell/visibility" as never)}
         >
           <Text style={styles.linkRight}>가시성 설정 ›</Text>
         </Pressable>
       </View>
 
+      {recentEncouragement ? (
+        <Pressable
+          onPress={dismissEncouragement}
+          style={styles.toast}
+        >
+          <Text style={styles.toastEmoji}>{recentEncouragement.emoji ?? "·"}</Text>
+          <Text style={styles.toastBody} numberOfLines={2}>
+            새 격려가 도착했습니다
+            {recentEncouragement.message
+              ? ` — ${recentEncouragement.message}`
+              : ""}
+          </Text>
+        </Pressable>
+      ) : null}
+
       <View style={{ height: 16 }} />
       <ScrollView contentContainerStyle={{ gap: 8, paddingBottom: 32 }}>
-        {members.map((m) => (
+        {entries.map((e) => (
           <MemberRow
-            key={m.id}
-            displayName={m.display_name}
-            todayCount={todayCounts.get(m.id) ?? null}
+            key={e.member.id}
+            displayName={e.member.display_name}
+            todayCount={e.todayCount}
             onPress={() =>
               router.push({
                 pathname: "/(tabs)/cell/encourage/[memberId]",
-                params: { memberId: m.id },
+                params: { memberId: e.member.id },
               })
             }
           />
         ))}
 
         <Pressable
-          onPress={() => router.push("/(tabs)/cell/prayer-requests" as never)}
+          onPress={() =>
+            router.push("/(tabs)/cell/prayer-requests" as never)
+          }
           style={styles.linkRow}
         >
           <Text style={styles.linkText}>공동 기도제목 →</Text>
@@ -135,6 +139,25 @@ const styles = StyleSheet.create({
   linkText: {
     fontFamily: fonts.body,
     fontSize: 15,
+    color: colors.ink,
+  },
+  toast: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    padding: 14,
+    backgroundColor: colors.creamDeep,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.gold,
+    marginTop: 12,
+  },
+  toastEmoji: {
+    fontSize: 24,
+  },
+  toastBody: {
+    flex: 1,
+    fontFamily: fonts.body,
+    fontSize: 14,
     color: colors.ink,
   },
 });
