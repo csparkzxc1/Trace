@@ -6,3 +6,4 @@ export * as memory from "./memory";
 export * as prayer from "./prayer";
 export * as settings from "./settings";
 export * as assessment from "./assessment";
+export * as journey from "./journey";
