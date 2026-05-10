@@ -54,6 +54,7 @@ supabase secrets set TOSS_WEBHOOK_SECRET=whsec_xxx
 | daily-notification (slot=qt) | `*/5 * * * *` | 동일 |
 | daily-notification (slot=evening_review) | `*/5 * * * *` | 동일 |
 | weekly-summary | `0 19 * * 0` | 일요일 저녁 7시 (§7.3) |
+| payment-charge-recurring | `0 4 * * *` | 매일 새벽 4시. 만료 3일 전 사용자 정기 청구 |
 
 ## 1. 환경변수
 
