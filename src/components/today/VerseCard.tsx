@@ -1,17 +1,29 @@
-import { View, Text, StyleSheet } from "react-native";
+import { Pressable, View, Text, StyleSheet } from "react-native";
 import { colors, fonts } from "@/theme/tokens";
 import type { Verse } from "@/lib/data/verses";
 
-export function VerseCard({ verse }: { verse: Verse }) {
+type Props = {
+  verse: Verse;
+  onPress?: () => void;
+};
+
+export function VerseCard({ verse, onPress }: Props) {
   return (
-    <View style={styles.card}>
+    <Pressable
+      onPress={onPress}
+      disabled={!onPress}
+      style={({ pressed }) => [
+        styles.card,
+        pressed && onPress ? { opacity: 0.85 } : null,
+      ]}
+    >
       <Text style={styles.label}>오늘의 말씀</Text>
       <Text style={styles.text}>{verse.text}</Text>
       <View style={styles.rule} />
       <Text style={styles.ref}>
         {verse.reference} · {verse.translation}
       </Text>
-    </View>
+    </Pressable>
   );
 }
 

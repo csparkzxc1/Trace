@@ -58,7 +58,10 @@ export default function TodayScreen() {
         </View>
 
         <View style={{ height: 24 }} />
-        <VerseCard verse={verse} />
+        <VerseCard
+          verse={verse}
+          onPress={() => router.push("/(tabs)/today/verse-detail")}
+        />
       </ScrollView>
     </ScreenContainer>
   );

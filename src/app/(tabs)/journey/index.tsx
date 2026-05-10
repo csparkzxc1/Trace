@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import { View, Text, ScrollView, StyleSheet, Pressable } from "react-native";
+import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/ui";
 import { Wordmark } from "@/components/brand";
 import {
@@ -33,6 +34,7 @@ type RecentGroup = {
 };
 
 export default function JourneyScreen() {
+  const router = useRouter();
   const userId = useAuthStore((s) => s.user?.id);
   const today = todayIso();
   const year = new Date(today).getFullYear();
@@ -173,6 +175,31 @@ export default function JourneyScreen() {
           />
         </View>
 
+        {/* Sub-routes */}
+        <View style={styles.subLinks}>
+          <Pressable
+            onPress={() => router.push("/(tabs)/journey/stats")}
+            style={styles.subLink}
+          >
+            <Text style={styles.subLinkKo}>영역별 흔적</Text>
+            <Text style={styles.subLinkEn}>STATS ›</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => router.push("/(tabs)/journey/reading-plan")}
+            style={styles.subLink}
+          >
+            <Text style={styles.subLinkKo}>통독표</Text>
+            <Text style={styles.subLinkEn}>READING ›</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => router.push("/(tabs)/journey/discipleship")}
+            style={styles.subLink}
+          >
+            <Text style={styles.subLinkKo}>제자훈련</Text>
+            <Text style={styles.subLinkEn}>DISCIPLESHIP ›</Text>
+          </Pressable>
+        </View>
+
         {/* Recent */}
         {recents.length > 0 ? (
           <View style={styles.section}>
@@ -298,5 +325,31 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: "rgba(245, 241, 232, 0.65)",
     marginTop: 4,
+  },
+  subLinks: {
+    paddingTop: 24,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderColor: colors.line,
+  },
+  subLink: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "baseline",
+    paddingVertical: 14,
+    borderTopWidth: 1,
+    borderColor: colors.line,
+  },
+  subLinkKo: {
+    fontFamily: fonts.display,
+    fontSize: 16,
+    color: colors.ink,
+  },
+  subLinkEn: {
+    fontFamily: fonts.accent,
+    fontStyle: "italic",
+    fontSize: 12,
+    color: colors.gold,
+    letterSpacing: 1.4,
   },
 });
