@@ -11,15 +11,15 @@ dist/
 web-build/
 expo-env.d.ts
 
-# Native
+# Native (Expo prebuild output at repo root only — assets/brand/app-icons/ios|android는 추적함)
 *.orig.*
 *.jks
 *.p8
 *.p12
 *.key
 *.mobileprovision
-ios/
-android/
+/ios/
+/android/
 
 # Metro
 .metro-health-check*
