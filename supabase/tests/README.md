@@ -12,7 +12,8 @@
 | 3 | daily_checks_public 뷰에 note·scripture_ref 컬럼 부재 | 0 columns |
 | 4 | 다른 구역에서 daily_checks 차단 | 0 rows |
 | 4b | 다른 구역에서 daily_checks_public 뷰 차단 | 0 rows |
-| 5 | (안내) note 컬럼은 컬럼 GRANT/REVOKE로 추가 보호 권장 | — |
+| 5a | 0004 후 같은 구역 리더가 daily_checks 본 테이블 차단 | 0 rows |
+| 5b | daily_checks_public 뷰에 note 컬럼 부재로 직접 SELECT 거부 | undefined_column |
 | 6 | hide_from_leader=true 시 cell_leader 차단 | 0 rows |
 | 7 | 다른 구역에 격려 INSERT 차단 | exception |
 | 7b | 같은 구역에 격려 INSERT 성공 | 1 row |
@@ -38,18 +39,15 @@ psql "$(supabase status --output json | jq -r '.DB_URL')" \
 마지막 줄이 `=== 모든 가시성 RLS 시나리오 통과 ===` 이면 성공.
 모든 변경은 트랜잭션 ROLLBACK 으로 되돌려진다.
 
-## 추가 권장 (시나리오 5 후속)
+## 시나리오 5 후속 — 0004 마이그레이션으로 적용 완료
 
-운영 DB에서는 RLS 외에 컬럼 권한도 적용하는 것이 안전합니다:
+`migrations/0004_column_grants.sql` 에서:
+- `daily_checks` / `prayer_journal` 본 테이블의 같은 구역 SELECT 정책 제거
+- `daily_checks_public` · `prayer_journal_shared` 뷰를 SECURITY DEFINER 로 운용,
+  뷰 안에 가시성 로직 내장
+- anon 역할의 본 테이블 SELECT 권한 명시 차단
 
-```sql
-revoke select on public.daily_checks from authenticated;
-grant select (id, user_id, date, category_id, completed, duration_minutes,
-              created_at, updated_at)
-  on public.daily_checks to authenticated;
--- note, scripture_ref 는 본인만 daily_checks_public 뷰가 아닌
--- 자체 정책으로 select 가능. 본 가이드는 출시 직전 보강 항목.
-```
+→ 같은 구역 사용자는 뷰로만 접근, 노트·구절 컬럼은 물리적으로 노출되지 않음.
 
 ## CI 통합
 

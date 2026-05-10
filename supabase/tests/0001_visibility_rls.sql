@@ -120,8 +120,8 @@ begin
 end$$;
 
 -- ============================================================================
--- 시나리오 2: 같은 구역의 멤버A2가 멤버A1의 카운트 row를 읽는다 (share_total_only=true)
--- → daily_checks SELECT 자체는 가능, 단 daily_checks_public 뷰에는 note 컬럼 없음
+-- 시나리오 2: 같은 구역의 멤버A2는 daily_checks 본 테이블에는 접근 차단,
+--   daily_checks_public 뷰로만 카운트 가능 (0004 컬럼 보강 후)
 -- ============================================================================
 do $$
 declare
@@ -134,11 +134,11 @@ begin
 
   select count(*) into cnt_total
   from daily_checks where user_id = v_a1;
-  perform _expect('2a) 같은 구역 share_total_only=true 카운트 가능', cnt_total, 2);
+  perform _expect('2a) 0004 후 daily_checks 본 테이블 같은 구역 차단', cnt_total, 0);
 
   select count(*) into cnt_public
   from daily_checks_public where user_id = v_a1;
-  perform _expect('2b) daily_checks_public 뷰로도 카운트 가능', cnt_public, 2);
+  perform _expect('2b) daily_checks_public 뷰로 카운트 가능', cnt_public, 2);
 end$$;
 
 -- ============================================================================
@@ -174,19 +174,29 @@ begin
 end$$;
 
 -- ============================================================================
--- 시나리오 5: 같은 구역의 리더A도 멤버A1의 note를 직접 SELECT 할 수 없다
--- (daily_checks 본 테이블에는 note 컬럼이 있지만 RLS가 카테고리별 정책으로
---  share_total_only=true 인 케이스에선 row를 노출하되 클라이언트는 뷰만 사용)
---
--- 본 시나리오는 "원천 테이블에 직접 note SELECT 했을 때 정책이 통과하더라도
--- RLS는 row 단위로만 제어하므로, 노트 비공개는 클라이언트 뷰 사용 + 컬럼 권한
--- (REVOKE)으로 보장해야 함을 명시한다."
--- → 따라서 실제 운영에선 GRANT SELECT (date, completed, ...) 형태의 컬럼
--- 권한을 추가로 적용해야 한다. 현재 테스트는 안내 메시지만 출력.
+-- 시나리오 5: 0004 후 같은 구역의 리더A는 멤버A1의 note에 절대 접근 못 한다
+--   - daily_checks 본 테이블 SELECT → 0 rows (구역 SELECT 정책 제거됨)
+--   - daily_checks_public 뷰는 note 컬럼 자체가 부재
 -- ============================================================================
 do $$
+declare
+  cnt int;
+  v_a1 uuid := current_setting('app.test_member_a1')::uuid;
+  v_la uuid := current_setting('app.test_leader_a')::uuid;
 begin
-  raise notice 'NOTE [5] daily_checks.note 컬럼은 RLS 외에 컬럼 GRANT/REVOKE로 추가 보호 권장';
+  perform _as_user(v_la);
+
+  select count(*) into cnt from daily_checks where user_id = v_a1;
+  perform _expect('5a) 같은 구역 리더가 daily_checks 본 테이블 SELECT 차단', cnt, 0);
+
+  -- 뷰에 note 컬럼이 부재하므로 직접 참조하면 SQL 에러
+  begin
+    execute format('select note from daily_checks_public where user_id = %L', v_a1);
+    raise exception 'FAIL [5b] daily_checks_public 에 note 컬럼이 살아있음';
+  exception
+    when undefined_column then
+      raise notice 'OK   [5b] daily_checks_public.note 컬럼 부재로 SELECT 거부';
+  end;
 end$$;
 
 -- ============================================================================
