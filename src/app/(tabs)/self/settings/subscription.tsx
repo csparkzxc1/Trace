@@ -1,19 +1,15 @@
 import { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { ScreenContainer, Card, Button } from "@/components/ui";
+import { BillingAuthModal } from "@/components/payment/BillingAuthModal";
 import { useAuthStore } from "@/lib/stores/auth";
 import * as paymentApi from "@/lib/api/payment";
 import * as authApi from "@/lib/api/auth";
 import { isPremiumActive } from "@/lib/utils/premium";
 import { colors, fonts } from "@/theme/tokens";
 
-// 토스 결제 위젯/SDK 통합 자리. 실제 출시 시 @tosspayments/payment-sdk
-// (RN: react-native-toss-payments-sdk 또는 WebView) 로 교체.
-// 본 화면은 authKey 가 사용자 흐름 후 콜백으로 전달된다고 가정한 인터페이스.
-async function authorizeBillingKeyViaToss(): Promise<string | null> {
-  // TODO: react-native-toss-payments-sdk 통합. 현재는 미통합 안내.
-  return null;
-}
+const TOSS_CLIENT_KEY =
+  process.env.EXPO_PUBLIC_TOSS_CLIENT_KEY ?? "test_ck_REPLACE_ME";
 
 export default function SubscriptionSettings() {
   const profile = useAuthStore((s) => s.profile);
@@ -22,25 +18,24 @@ export default function SubscriptionSettings() {
   const active = isPremiumActive(profile);
   const [busy, setBusy] = useState(false);
   const [hint, setHint] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
-  async function startSubscription() {
+  function startSubscription() {
     if (!userId) return;
-    setBusy(true);
     setHint(null);
+    setModalOpen(true);
+  }
+
+  async function onAuthKey(authKey: string) {
+    if (!userId) return;
+    setModalOpen(false);
+    setBusy(true);
     try {
-      const authKey = await authorizeBillingKeyViaToss();
-      if (!authKey) {
-        setHint(
-          "결제 모듈이 아직 연결되지 않았습니다. 잠시 뒤 다시 시도해주세요.",
-        );
-        return;
-      }
       const r = await paymentApi.issueBillingKey({
         customerKey: userId,
         authKey,
       });
       if (!r.ok) throw new Error("issue failed");
-      // 프로필 다시 불러와 게이트 갱신
       const fresh = await authApi.fetchProfile(userId);
       setProfile(fresh);
     } catch {
@@ -100,6 +95,18 @@ export default function SubscriptionSettings() {
             있으며, 해지 후에도 결제 주기 끝까지 Premium이 유지됩니다.
           </Text>
         </>
+      ) : null}
+
+      {userId ? (
+        <BillingAuthModal
+          visible={modalOpen}
+          customerKey={userId}
+          customerEmail={profile?.email}
+          customerName={profile?.display_name}
+          clientKey={TOSS_CLIENT_KEY}
+          onAuth={onAuthKey}
+          onCancel={() => setModalOpen(false)}
+        />
       ) : null}
     </ScreenContainer>
   );
