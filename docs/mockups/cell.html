@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>흔적 · Trace — 구역</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Noto+Serif+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .header-row { display: flex; justify-content: space-between; align-items: baseline; padding-top: 8px; }
+  .visibility-link { font-family: 'Gowun Dodum', sans-serif; font-size: 13px; color: var(--ink-soft); }
+  .toast {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px;
+    background: var(--cream-deep);
+    border-left: 3px solid var(--gold);
+    margin-top: 16px;
+  }
+  .toast-emoji { font-size: 24px; }
+  .toast-body { font-family: 'Gowun Dodum', sans-serif; font-size: 14px; color: var(--ink); }
+
+  .members { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+  .member {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 4px;
+  }
+  .member .name { font-family: 'Noto Serif KR', serif; font-size: 17px; }
+  .member .label { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 10px; color: var(--gold); letter-spacing: 0.2em; margin-top: 2px; }
+  .member .right { text-align: right; }
+  .count-num { font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 22px; color: var(--burgundy); }
+  .count-unit { font-family: 'Gowun Dodum', sans-serif; font-size: 12px; color: var(--ink-soft); }
+  .private { font-family: 'Gowun Dodum', sans-serif; font-size: 12px; color: var(--ink-soft); }
+  .link-row {
+    padding: 16px 0;
+    border-top: 1px solid var(--line);
+    margin-top: 8px;
+    font-family: 'Gowun Dodum', sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+  }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="notch"></div>
+  <div class="statusbar"><span>9:24</span><span>·</span></div>
+
+  <div class="content">
+    <div class="header-row">
+      <h1 class="h1">구역</h1>
+      <span class="visibility-link">가시성 설정 ›</span>
+    </div>
+
+    <div class="toast">
+      <span class="toast-emoji">🌿</span>
+      <span class="toast-body">새 격려가 도착했습니다 — 오늘도 동행합니다</span>
+    </div>
+
+    <div class="members">
+      <div class="member">
+        <div><div class="name">김은혜</div><div class="label">TODAY</div></div>
+        <div class="right"><span class="count-num">5</span><span class="count-unit"> 흔적</span></div>
+      </div>
+      <div class="member">
+        <div><div class="name">박지원</div><div class="label">TODAY</div></div>
+        <div class="right"><span class="count-num">4</span><span class="count-unit"> 흔적</span></div>
+      </div>
+      <div class="member">
+        <div><div class="name">윤서연</div><div class="label">TODAY</div></div>
+        <div class="right"><span class="private">비공개</span></div>
+      </div>
+      <div class="member">
+        <div><div class="name">이도현</div><div class="label">TODAY</div></div>
+        <div class="right"><span class="count-num">2</span><span class="count-unit"> 흔적</span></div>
+      </div>
+      <div class="member">
+        <div><div class="name">정민서</div><div class="label">TODAY</div></div>
+        <div class="right"><span class="count-num">7</span><span class="count-unit"> 흔적</span></div>
+      </div>
+      <div class="member">
+        <div><div class="name">최하연</div><div class="label">TODAY</div></div>
+        <div class="right"><span class="count-num">3</span><span class="count-unit"> 흔적</span></div>
+      </div>
+    </div>
+
+    <div class="link-row">공동 기도제목 →</div>
+  </div>
+
+  <div class="tabbar">
+    <div class="tabbar-item">오늘</div>
+    <div class="tabbar-item">여정</div>
+    <div class="tabbar-item active">구역</div>
+    <div class="tabbar-item">나</div>
+  </div>
+</div>
+</body>
+</html>

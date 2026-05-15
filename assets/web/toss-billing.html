@@ -1,0 +1,126 @@
+<!--
+  흔적 · Trace — Toss billing auth WebView 페이지
+
+  WebView 가 이 HTML 을 로드하면서 쿼리스트링으로 customerKey, clientKey 를 전달.
+  사용자 카드 인증 후 successUrl 로 이동, RN WebView 에서 trace://payment/...
+  스킴을 가로채 authKey 를 추출.
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>흔적 · Premium 결제</title>
+<style>
+  body {
+    margin: 0;
+    background: #F5F1E8;
+    color: #1F2A37;
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    padding: 32px 20px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  h1 { font-size: 22px; margin: 0 0 8px; font-weight: 500; letter-spacing: -0.5px; }
+  .sub { font-size: 13px; color: #4A5568; margin-bottom: 24px; line-height: 1.6; }
+  #payment-method, #agreement {
+    background: #FAF7EE;
+    border: 1px solid rgba(31,42,55,0.12);
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+  .btn {
+    display: block;
+    width: 100%;
+    height: 48px;
+    background: #1F2A37;
+    color: #F5F1E8;
+    border: none;
+    border-radius: 4px;
+    font-size: 15px;
+    cursor: pointer;
+    margin-top: 16px;
+  }
+  .btn:disabled { opacity: 0.4; }
+  .err { color: #7A2E2E; font-size: 13px; margin-top: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Premium 결제 수단 등록</h1>
+  <p class="sub">
+    카드를 등록하면 매월 4,900원이 자동으로 결제됩니다.<br/>
+    언제든 해지할 수 있으며, 해지 후에도 결제 주기 끝까지 Premium 이 유지됩니다.
+  </p>
+  <div id="payment-method"></div>
+  <div id="agreement"></div>
+  <button class="btn" id="submit" disabled>등록하기</button>
+  <p class="err" id="err" style="display:none"></p>
+</div>
+
+<script src="https://js.tosspayments.com/v2/standard"></script>
+<script>
+  function postToNative(payload) {
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(JSON.stringify(payload));
+    }
+  }
+
+  function showError(msg) {
+    var el = document.getElementById('err');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  var qs = new URLSearchParams(location.search);
+  var clientKey = qs.get('clientKey');
+  var customerKey = qs.get('customerKey');
+
+  if (!clientKey || !customerKey) {
+    showError('잘못된 요청입니다');
+  } else {
+    (async function () {
+      try {
+        var tossPayments = TossPayments(clientKey);
+        var widgets = tossPayments.widgets({ customerKey: customerKey });
+
+        // 빌링 위젯
+        await widgets.setAmount({ currency: 'KRW', value: 4900 });
+        await Promise.all([
+          widgets.renderPaymentMethods({
+            selector: '#payment-method',
+            variantKey: 'BILLING',
+          }),
+          widgets.renderAgreement({ selector: '#agreement' }),
+        ]);
+
+        var btn = document.getElementById('submit');
+        btn.disabled = false;
+        btn.addEventListener('click', async function () {
+          btn.disabled = true;
+          try {
+            await widgets.requestBillingAuth({
+              method: 'CARD',
+              successUrl: 'about:blank?status=success',
+              failUrl: 'about:blank?status=fail',
+              customerEmail: qs.get('customerEmail') || undefined,
+              customerName: qs.get('customerName') || undefined,
+            });
+          } catch (err) {
+            showError((err && err.message) || '결제가 완료되지 않았습니다');
+            btn.disabled = false;
+            postToNative({ type: 'cancelled' });
+          }
+        });
+      } catch (err) {
+        showError('결제 모듈을 불러오지 못했습니다');
+        postToNative({ type: 'error', message: String(err && err.message) });
+      }
+    })();
+  }
+</script>
+</body>
+</html>

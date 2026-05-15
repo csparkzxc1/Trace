@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>흔적 · 2026년의 흔적</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Noto+Serif+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5F1E8;
+    --cream-deep: #ECE5D3;
+    --paper: #FAF7EE;
+    --ink: #1F2A37;
+    --ink-soft: #4A5568;
+    --gold: #B8924F;
+    --gold-soft: #D4B57A;
+    --burgundy: #7A2E2E;
+    --sage: #6B7F5A;
+    --line: rgba(31, 42, 55, 0.12);
+    --cell-0: #ECE5D3;
+    --cell-1: rgba(184, 146, 79, 0.20);
+    --cell-2: rgba(184, 146, 79, 0.45);
+    --cell-3: rgba(122, 46, 46, 0.55);
+    --cell-4: #1F2A37;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Gowun Dodum', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: 
+      radial-gradient(circle at 15% 5%, rgba(184,146,79,0.06) 0%, transparent 50%),
+      radial-gradient(circle at 85% 95%, rgba(122,46,46,0.04) 0%, transparent 50%);
+    pointer-events: none; z-index: 0;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 1; }
+
+  /* HEADER */
+  .top-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .wordmark {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+  .wordmark .dot { color: var(--gold); margin: 0 0.15em; }
+  .wordmark .en {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+  .year-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+  }
+  .year-pill::after {
+    content: '▾';
+    font-size: 10px;
+    color: var(--gold-soft);
+  }
+
+  /* HERO */
+  .hero {
+    padding: 56px 0 40px;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero-eyebrow {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--gold);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-weight: 400;
+    font-size: 36px;
+    line-height: 1.3;
+    margin: 0 0 8px;
+    letter-spacing: -0.02em;
+  }
+  .hero h1 em {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 500;
+    color: var(--burgundy);
+  }
+  .hero-sub {
+    font-family: 'Gowun Batang', serif;
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 32px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+  .hero-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .hero-stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .hero-stat-num em {
+    font-style: italic;
+    color: var(--burgundy);
+  }
+  .hero-stat-label {
+    font-family: 'Gowun Dodum', sans-serif;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+  }
+
+  /* SECTION */
+  section { padding: 48px 0; border-bottom: 1px solid var(--line); }
+  section:last-child { border-bottom: none; }
+  .section-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .section-title {
+    font-family: 'Noto Serif KR', serif;
+    font-weight: 400;
+    font-size: 22px;
+    margin: 0 0 24px;
+  }
+
+  /* HEATMAP */
+  .heatmap-wrap {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 24px;
+    overflow-x: auto;
+  }
+  .heatmap-months {
+    display: grid;
+    grid-template-columns: 24px repeat(53, 12px);
+    gap: 2px;
+    margin-bottom: 6px;
+    min-width: 660px;
+  }
+  .month-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 10px;
+    color: var(--ink-soft);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    grid-row: 1;
+    text-align: left;
+    white-space: nowrap;
+  }
+  .heatmap-grid {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 4px;
+    min-width: 660px;
+  }
+  .day-labels {
+    display: grid;
+    grid-template-rows: repeat(7, 12px);
+    gap: 2px;
+    align-content: start;
+  }
+  .day-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 9px;
+    color: var(--ink-soft);
+    line-height: 12px;
+    letter-spacing: 0.05em;
+  }
+  .heatmap {
+    display: grid;
+    grid-template-columns: repeat(53, 12px);
+    grid-template-rows: repeat(7, 12px);
+    grid-auto-flow: column;
+    gap: 2px;
+  }
+  .cell {
+    width: 12px; height: 12px;
+    background: var(--cell-0);
+    border-radius: 2px;
+    transition: transform 0.1s, box-shadow 0.1s;
+    cursor: pointer;
+    position: relative;
+  }
+  .cell.l1 { background: var(--cell-1); }
+  .cell.l2 { background: var(--cell-2); }
+  .cell.l3 { background: var(--cell-3); }
+  .cell.l4 { background: var(--cell-4); }
+  .cell.future { background: transparent; cursor: default; }
+  .cell.sunday { box-shadow: inset 0 0 0 1px rgba(184, 146, 79, 0.4); }
+  .cell:hover:not(.future) {
+    transform: scale(1.4);
+    z-index: 5;
+    box-shadow: 0 2px 8px rgba(31, 42, 55, 0.25);
+  }
+  
+  /* Legend */
+  .heatmap-legend {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+    font-family: 'Gowun Batang', serif;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .legend-link {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--gold);
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .legend-scale {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 11px;
+  }
+  .legend-cell {
+    width: 11px; height: 11px;
+    border-radius: 2px;
+  }
+
+  /* TOOLTIP */
+  .tooltip {
+    position: fixed;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-family: 'Gowun Batang', serif;
+    font-size: 12px;
+    line-height: 1.5;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 100;
+    max-width: 220px;
+    box-shadow: 0 4px 16px rgba(31, 42, 55, 0.25);
+  }
+  .tooltip.show { opacity: 1; }
+  .tooltip .tt-date {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--gold-soft);
+    font-size: 11px;
+    margin-bottom: 4px;
+  }
+  .tooltip .tt-count {
+    color: var(--gold-soft);
+    font-style: italic;
+  }
+
+  /* RHYTHM (qualitative summary) */
+  .rhythm {
+    background: linear-gradient(180deg, rgba(184,146,79,0.04), rgba(184,146,79,0.01));
+    border-left: 3px solid var(--gold);
+    padding: 24px 24px;
+  }
+  .rhythm-line {
+    font-family: 'Gowun Batang', serif;
+    font-size: 15px;
+    line-height: 1.9;
+    margin: 0 0 14px;
+  }
+  .rhythm-line:last-child { margin: 0; }
+  .rhythm-line em {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--burgundy);
+    font-weight: 500;
+  }
+  .rhythm-line .accent {
+    color: var(--burgundy);
+    font-family: 'Noto Serif KR', serif;
+    font-weight: 500;
+  }
+
+  /* CATEGORY BREAKDOWN */
+  .breakdown {
+    background: var(--paper);
+    border: 1px solid var(--line);
+  }
+  .breakdown-row {
+    display: grid;
+    grid-template-columns: 1fr 60px 100px;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .breakdown-row:last-child { border-bottom: none; }
+  .breakdown-name {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 14px;
+  }
+  .breakdown-name .en {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-left: 6px;
+  }
+  .breakdown-count {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    color: var(--burgundy);
+    font-weight: 500;
+    text-align: right;
+  }
+  .breakdown-count em {
+    font-style: italic;
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-left: 2px;
+  }
+  .breakdown-bar {
+    height: 4px;
+    background: var(--cell-0);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .breakdown-bar-fill {
+    height: 100%;
+    background: var(--ink);
+    border-radius: 100px;
+  }
+
+  /* RECENT */
+  .recent-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .recent-row {
+    display: grid;
+    grid-template-columns: 70px 1fr auto;
+    gap: 14px;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .recent-row:last-child { border-bottom: none; }
+  .recent-date {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .recent-date strong {
+    display: block;
+    font-style: normal;
+    font-weight: 500;
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1;
+  }
+  .recent-text {
+    font-family: 'Gowun Batang', serif;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .recent-text .tag {
+    display: inline-block;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 11px;
+    color: var(--gold);
+    margin-right: 4px;
+  }
+  .recent-cells {
+    display: flex;
+    gap: 2px;
+  }
+  .recent-cells .mini-cell {
+    width: 8px; height: 8px;
+    border-radius: 1px;
+  }
+
+  /* FOOTER */
+  .footer-act {
+    margin-top: 48px;
+    padding: 24px;
+    background: var(--ink);
+    color: var(--paper);
+    text-align: center;
+  }
+  .footer-act .quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--gold-soft);
+    margin: 0 0 4px;
+  }
+  .footer-act .ko {
+    font-family: 'Gowun Batang', serif;
+    font-size: 13px;
+    color: rgba(245,241,232,0.65);
+  }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 28px; }
+    .hero-stats { gap: 24px; }
+    .hero-stat-num { font-size: 26px; }
+    .breakdown-row { grid-template-columns: 1fr 50px 70px; gap: 10px; }
+    .breakdown-name { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top-bar">
+    <div class="wordmark">흔적<span class="dot">·</span><span class="en">Trace</span></div>
+    <div class="year-pill">2026</div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">My Journey · 나의 흔적</div>
+    <h1><em>121</em>일의 흔적이<br/>2026년에 남았습니다</h1>
+    <p class="hero-sub">올해의 동행을 한 화면에서 돌아봅니다 · 마지막 흔적: 5월 10일 (오늘)</p>
+    
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num"><em>121</em></div>
+        <div class="hero-stat-label">함께한 날</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">487</div>
+        <div class="hero-stat-label">남긴 흔적</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">7</div>
+        <div class="hero-stat-label">영성훈련 영역</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEATMAP -->
+  <section>
+    <div class="section-label">Year at a glance</div>
+    <h2 class="section-title">한 해의 결</h2>
+    
+    <div class="heatmap-wrap">
+      <div class="heatmap-months" id="months"></div>
+      <div class="heatmap-grid">
+        <div class="day-labels">
+          <div class="day-label">Mon</div>
+          <div class="day-label"></div>
+          <div class="day-label">Wed</div>
+          <div class="day-label"></div>
+          <div class="day-label">Fri</div>
+          <div class="day-label"></div>
+          <div class="day-label" style="color: var(--gold);">Sun</div>
+        </div>
+        <div class="heatmap" id="heatmap"></div>
+      </div>
+      <div class="heatmap-legend">
+        <a class="legend-link">흔적은 어떻게 쌓이나요 →</a>
+        <div class="legend-scale">
+          <span>덜</span>
+          <span class="legend-cell" style="background: var(--cell-0);"></span>
+          <span class="legend-cell" style="background: var(--cell-1);"></span>
+          <span class="legend-cell" style="background: var(--cell-2);"></span>
+          <span class="legend-cell" style="background: var(--cell-3);"></span>
+          <span class="legend-cell" style="background: var(--cell-4);"></span>
+          <span>더</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RHYTHM (qualitative summary) -->
+  <section>
+    <div class="section-label">Rhythm of the Year</div>
+    <h2 class="section-title">올해의 결</h2>
+    
+    <div class="rhythm">
+      <p class="rhythm-line">
+        올해는 <em>새벽기도</em>와 함께 시작된 봄이었습니다.
+      </p>
+      <p class="rhythm-line">
+        4월 둘째주부터 3주간 <span class="accent">가장 깊이 동행</span>하셨고,
+      </p>
+      <p class="rhythm-line">
+        5월에는 <em>말씀</em>이 가장 마음에 머물렀습니다.
+      </p>
+      <p class="rhythm-line">
+        주일 예배의 흔적이 한 번도 끊기지 않았습니다 — <em>17주 연속</em>.
+      </p>
+    </div>
+  </section>
+
+  <!-- CATEGORY BREAKDOWN -->
+  <section>
+    <div class="section-label">May 2026</div>
+    <h2 class="section-title">이번 달의 흔적</h2>
+    
+    <div class="breakdown">
+      <div class="breakdown-row">
+        <div class="breakdown-name">예배 · 새벽기도 <span class="en">Worship</span></div>
+        <div class="breakdown-count">12<em>회</em></div>
+        <div class="breakdown-bar"><div class="breakdown-bar-fill" style="width: 100%"></div></div>
+      </div>
+      <div class="breakdown-row">
+        <div class="breakdown-name">개인 기도 <span class="en">Prayer</span></div>
+        <div class="breakdown-count">9<em>회</em></div>
+        <div class="breakdown-bar"><div class="breakdown-bar-fill" style="width: 75%"></div></div>
+      </div>
+      <div class="breakdown-row">
+        <div class="breakdown-name">말씀 읽기 <span class="en">The Word</span></div>
+        <div class="breakdown-count">8<em>회</em></div>
+        <div class="breakdown-bar"><div class="breakdown-bar-fill" style="width: 67%"></div></div>
+      </div>
+      <div class="breakdown-row">
+        <div class="breakdown-name">QT · 묵상 <span class="en">Quiet Time</span></div>
+        <div class="breakdown-count">4<em>회</em></div>
+        <div class="breakdown-bar"><div class="breakdown-bar-fill" style="width: 33%"></div></div>
+      </div>
+      <div class="breakdown-row">
+        <div class="breakdown-name">성경 암송 <span class="en">Memory</span></div>
+        <div class="breakdown-count">2<em>회</em></div>
+        <div class="breakdown-bar"><div class="breakdown-bar-fill" style="width: 17%"></div></div>
+      </div>
+      <div class="breakdown-row">
+        <div class="breakdown-name">전도 · 섬김 <span class="en">Witness</span></div>
+        <div class="breakdown-count">2<em>회</em></div>
+        <div class="breakdown-bar"><div class="breakdown-bar-fill" style="width: 17%"></div></div>
+      </div>
+      <div class="breakdown-row">
+        <div class="breakdown-name">봉사 · 헌금 <span class="en">Stewardship</span></div>
+        <div class="breakdown-count">1<em>회</em></div>
+        <div class="breakdown-bar"><div class="breakdown-bar-fill" style="width: 8%"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RECENT -->
+  <section>
+    <div class="section-label">Recent traces</div>
+    <h2 class="section-title">최근의 흔적</h2>
+    
+    <ul class="recent-list" id="recent"></ul>
+  </section>
+
+  <div class="footer-act">
+    <p class="quote">"Leave a trace, not a score."</p>
+    <p class="ko">신앙은 점수가 아닌 흔적입니다.</p>
+  </div>
+
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+  // ===== Generate sample data =====
+  const today = new Date(2026, 4, 10); // May 10, 2026
+  const yearStart = new Date(2026, 0, 1);
+  
+  // Get day of week of Jan 1 (0=Sun)
+  const startDayOfWeek = yearStart.getDay();
+  
+  // Generate 365 days of activity
+  function generateData() {
+    const days = [];
+    const totalDays = 365;
+    for (let i = 0; i < totalDays; i++) {
+      const date = new Date(2026, 0, 1);
+      date.setDate(date.getDate() + i);
+      const dayOfWeek = date.getDay();
+      const isFuture = date > today;
+      
+      let count = 0;
+      if (!isFuture) {
+        // Realistic patterns
+        const month = date.getMonth();
+        const day = date.getDate();
+        
+        // Sunday: usually high (worship)
+        if (dayOfWeek === 0) {
+          count = Math.random() < 0.85 ? 3 + Math.floor(Math.random() * 4) : 0;
+        }
+        // Wednesday: midweek prayer somewhat high
+        else if (dayOfWeek === 3) {
+          count = Math.random() < 0.65 ? 2 + Math.floor(Math.random() * 3) : 0;
+        }
+        // Friday: prayer night
+        else if (dayOfWeek === 5) {
+          count = Math.random() < 0.55 ? 1 + Math.floor(Math.random() * 4) : 0;
+        }
+        // Other days
+        else {
+          count = Math.random() < 0.45 ? 1 + Math.floor(Math.random() * 3) : 0;
+        }
+        
+        // Strong April-May focus (recent commitment)
+        if ((month === 3 && day >= 8) || (month === 4 && day <= 10)) {
+          count = Math.min(7, count + 1 + Math.floor(Math.random() * 2));
+        }
+        
+        // Some empty stretches (vacation, illness)
+        if (month === 1 && day >= 10 && day <= 16) count = 0;
+        if (month === 2 && day >= 5 && day <= 8) count = 0;
+      }
+      
+      days.push({
+        date,
+        dayOfWeek,
+        count,
+        isFuture,
+        isToday: date.getTime() === today.getTime()
+      });
+    }
+    return days;
+  }
+  
+  const days = generateData();
+  
+  // ===== Render heatmap =====
+  function levelClass(count) {
+    if (count === 0) return '';
+    if (count <= 2) return 'l1';
+    if (count <= 4) return 'l2';
+    if (count <= 5) return 'l3';
+    return 'l4';
+  }
+  
+  function getMonthLabel(monthIdx) {
+    return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][monthIdx];
+  }
+  
+  function fmtDate(d) {
+    const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    const dows = ['일','월','화','수','목','금','토'];
+    return `${months[d.getMonth()]} ${d.getDate()} · ${dows[d.getDay()]}`;
+  }
+
+  const heatmapEl = document.getElementById('heatmap');
+  const monthsEl = document.getElementById('months');
+  
+  // Build cells in column-major (week by week)
+  // GitHub layout: each column = 1 week (Sun-Sat)
+  
+  // First, pad start so Jan 1 falls on correct day of week
+  const cells = [];
+  for (let i = 0; i < startDayOfWeek; i++) {
+    cells.push(null); // empty leading cells
+  }
+  days.forEach(d => cells.push(d));
+  
+  // Pad end to fill 53 weeks * 7 days = 371
+  while (cells.length < 371) cells.push(null);
+  
+  // Render in column-major order, but CSS grid-auto-flow: column will handle order
+  // Actually we need to put them in order so they fill columns first
+  
+  // Reorganize: by column (week), within each column rows 0-6 (Sun-Sat)
+  // Rearrange to display Mon-Sun? GitHub uses Sun-Sat. Let's stick with Sun first.
+  
+  // CSS grid with grid-auto-flow: column will take cells in order and fill column by column
+  // So we need cells in order: week0-day0, week0-day1, ..., week0-day6, week1-day0, ...
+  // Our cells array is already in chronological order with leading padding, so grid-auto-flow column works
+  
+  cells.forEach((c) => {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    if (c === null) {
+      cell.classList.add('future');
+      cell.style.visibility = 'hidden';
+    } else if (c.isFuture) {
+      cell.classList.add('future');
+    } else {
+      const lc = levelClass(c.count);
+      if (lc) cell.classList.add(lc);
+      if (c.dayOfWeek === 0) cell.classList.add('sunday');
+      cell.dataset.date = c.date.toISOString();
+      cell.dataset.count = c.count;
+      
+      cell.addEventListener('mouseenter', (e) => showTooltip(e, c));
+      cell.addEventListener('mouseleave', hideTooltip);
+      cell.addEventListener('mousemove', moveTooltip);
+    }
+    heatmapEl.appendChild(cell);
+  });
+  
+  // Month labels — calculate which column each month starts at
+  // Each column is 14px wide (12px + 2px gap)
+  let lastMonth = -1;
+  const monthLabels = [];
+  cells.forEach((c, i) => {
+    if (c === null) return;
+    const week = Math.floor(i / 7);
+    const dow = i % 7;
+    if (dow === 0 && c.date.getMonth() !== lastMonth) {
+      lastMonth = c.date.getMonth();
+      monthLabels.push({ week, month: c.date.getMonth() });
+    }
+  });
+  
+  monthLabels.forEach(({week, month}) => {
+    const lbl = document.createElement('div');
+    lbl.className = 'month-label';
+    lbl.textContent = getMonthLabel(month);
+    lbl.style.gridColumn = `${week + 2} / span 4`; // +2 because col 1 is empty for day labels
+    monthsEl.appendChild(lbl);
+  });
+
+  // ===== Tooltip =====
+  const tooltip = document.getElementById('tooltip');
+  
+  function showTooltip(e, day) {
+    const cats = ['예배·새벽기도', '말씀 읽기', '개인 기도', 'QT 묵상', '성경 암송', '전도·섬김', '봉사·헌금'];
+    const sample = [];
+    for (let i = 0; i < day.count && i < 7; i++) {
+      sample.push(cats[i]);
+    }
+    
+    let html = `<div class="tt-date">${fmtDate(day.date)}</div>`;
+    if (day.count === 0) {
+      html += `<div>흔적 없는 날 — 괜찮습니다</div>`;
+    } else {
+      html += `<div class="tt-count">${day.count}가지 영역의 흔적</div>`;
+      html += `<div style="margin-top:6px; opacity:0.8; font-size:11px;">${sample.slice(0,3).join(' · ')}${sample.length > 3 ? ' 외' : ''}</div>`;
+    }
+    tooltip.innerHTML = html;
+    tooltip.classList.add('show');
+    moveTooltip(e);
+  }
+  function moveTooltip(e) {
+    const x = e.clientX;
+    const y = e.clientY;
+    tooltip.style.left = (x + 14) + 'px';
+    tooltip.style.top = (y - 50) + 'px';
+  }
+  function hideTooltip() {
+    tooltip.classList.remove('show');
+  }
+
+  // ===== Recent activity =====
+  const recentSamples = [
+    { date: '5/10', dow: '일', items: [['Worship', '주일예배'], ['Prayer', '저녁 기도']] },
+    { date: '5/9', dow: '토', items: [['The Word', '갈라디아서 5장'], ['Memory', '시편 23편 암송 복습']] },
+    { date: '5/8', dow: '금', items: [['Worship', '금요철야'], ['Prayer', '구역 기도제목']] },
+    { date: '5/7', dow: '목', items: [['Quiet Time', '잠언 16장 묵상'], ['The Word', '갈라디아서 4장']] },
+    { date: '5/6', dow: '수', items: [['Worship', '수요예배'], ['Prayer', '새벽기도']] },
+    { date: '5/4', dow: '월', items: [['Witness', '직장 동료에게 책 선물']] },
+    { date: '5/3', dow: '일', items: [['Worship', '주일예배'], ['Stewardship', '월정 헌금'], ['Prayer', '구역 모임']] }
+  ];
+  
+  const recentEl = document.getElementById('recent');
+  recentSamples.forEach(r => {
+    const li = document.createElement('li');
+    li.className = 'recent-row';
+    
+    const itemsHtml = r.items.map(([tag, text]) => 
+      `<span class="tag">${tag}</span>${text}`
+    ).join(' · ');
+    
+    const cells = r.items.map(() => 
+      `<span class="mini-cell" style="background: var(--cell-3);"></span>`
+    ).join('');
+    
+    li.innerHTML = `
+      <div class="recent-date">May<br/><strong>${r.date.split('/')[1]}</strong></div>
+      <div class="recent-text">${itemsHtml}</div>
+      <div class="recent-cells">${cells}</div>
+    `;
+    recentEl.appendChild(li);
+  });
+</script>
+</body>
+</html>

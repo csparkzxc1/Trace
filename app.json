@@ -1,0 +1,85 @@
+{
+  "expo": {
+    "name": "흔적 · Trace",
+    "slug": "trace",
+    "scheme": "trace",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/brand/app-icons/ios/AppIcon-1024.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/brand/splash/splash-light.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F5F1E8"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "faith.trace.app",
+      "usesAppleSignIn": true,
+      "infoPlist": {
+        "CFBundleDevelopmentRegion": "ko",
+        "CFBundleAllowMixedLocalizations": true,
+        "NSMicrophoneUsageDescription": "성경 암송 음성 학습에 사용됩니다.",
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/brand/app-icons/android/ic_launcher_foreground.png",
+        "backgroundColor": "#F5F1E8"
+      },
+      "package": "faith.trace.app"
+    },
+    "web": {
+      "favicon": "./assets/brand/monogram/monogram-light-32.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-secure-store",
+      "expo-apple-authentication",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/brand/notification-icon.png",
+          "color": "#F5F1E8"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "15.1"
+          },
+          "android": {
+            "minSdkVersion": 24
+          }
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "locales": {
+      "ko": "./src/i18n/ko.json"
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "85030f66-7505-4059-b3b8-bf79e873e615"
+      }
+    },
+    "owner": "csparkzxc",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/85030f66-7505-4059-b3b8-bf79e873e615"
+    }
+  }
+}

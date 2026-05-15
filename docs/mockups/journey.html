@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>흔적 · Trace — 여정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Noto+Serif+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .wordmark { font-family: 'Noto Serif KR', serif; font-size: 18px; font-weight: 500; letter-spacing: -0.02em; }
+  .wordmark .dot { color: var(--gold); margin: 0 0.15em; }
+  .wordmark .en { font-family: 'Cormorant Garamond', serif; font-style: italic; }
+  .pill {
+    background: var(--ink); color: var(--cream);
+    padding: 6px 14px; border-radius: 100px;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 13px; letter-spacing: 0.1em;
+  }
+  .hero { padding: 32px 0 28px; border-bottom: 1px solid var(--line); }
+  .hero h1 {
+    font-family: 'Noto Serif KR', serif; font-weight: 400;
+    font-size: 30px; line-height: 1.3; margin: 8px 0; letter-spacing: -0.02em;
+  }
+  .hero h1 em {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-weight: 600;
+    color: var(--burgundy); font-size: 36px;
+  }
+  .hero-sub { font-family: 'Gowun Dodum', sans-serif; font-size: 13px; color: var(--ink-soft); margin: 8px 0 0; }
+  .hero-stats { display: flex; gap: 28px; margin-top: 20px; flex-wrap: wrap; }
+  .hero-stats .label { font-family: 'Gowun Dodum', sans-serif; font-size: 12px; color: var(--ink-soft); margin-top: 4px; }
+  .hero-stats .v {
+    font-family: 'Cormorant Garamond', serif; font-weight: 600;
+    font-size: 30px; color: var(--ink); line-height: 1;
+  }
+  .hero-stats .v.em { color: var(--burgundy); font-style: italic; }
+
+  .section { padding: 28px 0; border-bottom: 1px solid var(--line); }
+  .section-label {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 12px; color: var(--gold); letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .section h2 { font-family: 'Noto Serif KR', serif; font-size: 20px; margin: 6px 0 16px; font-weight: 500; }
+
+  /* Year heatmap (압축 — 53 columns × 7 rows = 371 cells) */
+  .year-grid {
+    display: grid;
+    grid-template-columns: repeat(53, 5px);
+    grid-template-rows: repeat(7, 5px);
+    grid-auto-flow: column;
+    gap: 1px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 12px;
+    overflow-x: auto;
+  }
+  .year-grid .c { width: 5px; height: 5px; border-radius: 1px; }
+  .y0 { background: var(--cream-deep); }
+  .y1 { background: rgba(184,146,79,0.20); }
+  .y2 { background: rgba(184,146,79,0.45); }
+  .y3 { background: rgba(122,46,46,0.55); }
+  .y4 { background: var(--ink); }
+  .future { background: transparent; }
+
+  .rhythm {
+    background: rgba(184,146,79,0.04);
+    border-left: 3px solid var(--gold);
+    padding: 18px 18px;
+  }
+  .rhythm p { font-family: 'Gowun Dodum', sans-serif; font-size: 14px; line-height: 1.9; margin: 0 0 10px; }
+  .rhythm p:last-child { margin: 0; }
+  .rhythm em {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-weight: 500; color: var(--burgundy); font-size: 15px;
+  }
+
+  .donut-wrap { display: flex; flex-direction: column; align-items: center; }
+  .donut {
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: conic-gradient(
+      var(--gold) 0% 38%,
+      var(--burgundy) 38% 60%,
+      var(--sage) 60% 75%,
+      var(--ink-soft) 75% 86%,
+      var(--gold-soft) 86% 92%,
+      #A37777 92% 96%,
+      var(--ink) 96% 100%
+    );
+    position: relative;
+  }
+  .donut::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 130px; height: 130px;
+    background: var(--cream);
+    border-radius: 50%;
+  }
+  .donut .center {
+    position: absolute;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 2;
+  }
+  .donut .center .v { font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 36px; color: var(--burgundy); }
+  .donut .center .l { font-family: 'Gowun Dodum', sans-serif; font-size: 12px; color: var(--ink-soft); margin-top: 4px; }
+
+  .footer-quote {
+    margin-top: 28px;
+    padding: 24px;
+    background: var(--ink); color: var(--cream);
+    text-align: center;
+  }
+  .footer-quote .q { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 18px; color: var(--gold-soft); }
+  .footer-quote .ko { font-family: 'Gowun Batang', serif; font-size: 13px; color: rgba(245,241,232,0.65); margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="notch"></div>
+  <div class="statusbar"><span>9:24</span><span>·</span></div>
+
+  <div class="content">
+    <div class="topbar">
+      <div class="wordmark">흔적<span class="dot">·</span><span class="en">Trace</span></div>
+      <div class="pill">2026</div>
+    </div>
+
+    <div class="hero">
+      <div class="section-label">MY JOURNEY · 나의 흔적</div>
+      <h1><em>121</em>일의 흔적이<br/>2026년에 남았습니다</h1>
+      <p class="hero-sub">올해의 동행을 한 화면에서 · 마지막 흔적: 5월 10일</p>
+      <div class="hero-stats">
+        <div><div class="v em">121</div><div class="label">함께한 날</div></div>
+        <div><div class="v">487</div><div class="label">남긴 흔적</div></div>
+        <div><div class="v">7</div><div class="label">영성훈련 영역</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">YEAR AT A GLANCE</div>
+      <h2>한 해의 결</h2>
+      <div class="year-grid" id="grid"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">RHYTHM OF THE YEAR</div>
+      <h2>올해의 결</h2>
+      <div class="rhythm">
+        <p>올해는 <em>예배</em>와 함께 시작된 봄이었습니다.</p>
+        <p>4월 둘째주부터 <em>3</em>주간 가장 깊이 동행하셨습니다.</p>
+        <p>4월에는 <em>말씀</em>이 가장 마음에 머물렀습니다.</p>
+        <p>주일 예배의 흔적이 한 번도 끊기지 않았습니다 — <em>17</em>주 연속.</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">MAY 2026</div>
+      <h2>이번 달의 흔적</h2>
+      <div class="donut-wrap">
+        <div class="donut">
+          <div class="center"><div class="v">38</div><div class="l">이번 달 흔적</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-quote">
+      <div class="q">"Leave a trace, not a score."</div>
+      <div class="ko">신앙은 점수가 아닌 흔적입니다.</div>
+    </div>
+  </div>
+
+  <div class="tabbar">
+    <div class="tabbar-item">오늘</div>
+    <div class="tabbar-item active">여정</div>
+    <div class="tabbar-item">구역</div>
+    <div class="tabbar-item">나</div>
+  </div>
+</div>
+
+<script>
+  // 1년치 365개 셀을 무작위 4단계 강도로 채움 (시연용)
+  const grid = document.getElementById('grid');
+  const seed = (i) => Math.sin(i * 12.9898) * 43758.5453;
+  for (let i = 0; i < 53 * 7; i++) {
+    const c = document.createElement('div');
+    c.className = 'c ';
+    if (i > 130) {
+      c.className += 'future';
+    } else {
+      const r = (seed(i) - Math.floor(seed(i)));
+      const isSun = (i % 7) === 0;
+      let lvl = 0;
+      if (r > 0.6) lvl = isSun ? 4 : 2;
+      else if (r > 0.3) lvl = 1;
+      else if (r > 0.1) lvl = 3;
+      else lvl = 0;
+      c.className += 'y' + lvl;
+    }
+    grid.appendChild(c);
+  }
+</script>
+</body>
+</html>
