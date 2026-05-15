@@ -60,6 +60,17 @@
 - EAS 프로파일: `eas.json` (development · preview · production)
 - 환경변수: `.env.example` 참조
 
+## 새 맥 셋업 (Xcode 로컬 빌드)
+
+EAS 크레딧 안 쓰고 맥에서 직접 빌드/실행:
+
+```bash
+# Xcode + Homebrew 가 설치된 상태에서
+./scripts/mac-setup.sh
+```
+
+스크립트가 brew 패키지 → pnpm install → typecheck → `expo prebuild` → `pod install` → Xcode 열기까지 일괄 수행.
+
 ## 시작하기
 
 ```bash
