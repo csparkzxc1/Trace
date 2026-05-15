@@ -47,6 +47,17 @@
           "icon": "./assets/brand/notification-icon.png",
           "color": "#F5F1E8"
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "15.1"
+          },
+          "android": {
+            "minSdkVersion": 24
+          }
+        }
       ]
     ],
     "experiments": {
